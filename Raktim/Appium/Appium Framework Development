@@ -1,0 +1,19 @@
+APPIUM FRAMEWORK DEVELOPMENT PLAN 
+
+  i. Create Maven project for framework structire generation //build management tool
+  ii. Build Appium tests in project 
+  iii. Develop a plan to define global properties for Appium Desired capabilities
+  iv. Make the tests TestNG compatible to utilize the features of TestNG framework
+  v. Make Page Object Model design pattern for the tests so that objects should not stay in TestCases
+  vi. Develop Appium custom utilities to avoid duplicate code
+  vii. Build utilities to start & stop Appium server programmatically
+  viii. Give a knowledge to framework to invoke Emulator on fly if Virual device option is selected
+  ix. Build TestNG Listeners to capture screenshots on Test failures
+  x. Generate Excellent client-side Reports on Test Results with Graphs
+  xi. Implement Data Driven & Parameterization mechanism to drive Test Data externally into Tests
+  xii. Integrate Framework repo into Jenkins CI tool
+  xiii. Parametrize the Jenkins build so that user have option to select Mobile device 
+        which needed to run tests for that specific build
+  xiv. Push your framework changes into GIT repository . 
+        
+        

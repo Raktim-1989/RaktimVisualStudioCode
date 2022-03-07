@@ -1,0 +1,215 @@
+### CORE AUTOMATION FRAMEWORKS: AUTOMATION COE ###
+
+Raktim's role: Raktim is a part of COE (Center Of Excellence)team, who is supporting all the horizontal teams !!
+
+Works for Micro services Automation || Front-End Automation || Hybrid & Integrated Framework development || Unit Testing || Java || Spring Boot || Cucumber || BDD || Groovy Scripting || Android Mobile App Automation
+Domain Expertise : Healthcare || Telecom || Payment Systems || E-commerce
+
+Core/Central Activities:
+  1. Developed robust automation frameworks from scratch by integrating core automation components satisfying 
+     the CI-CD process.
+  2. Strong experiecne working on differnt kinda automation tools & technologies like
+      Front end Automation APIs                         Back end Automation
+      Selenium- Java                        Postman Client - Automation of Rest API - Java-REST Assured 
+      Protractor- JS for angular             SOAP UI tool  - Testing WebServices & Rest API-groovy scripting
+
+       Build Tool                CI-CD                            VCS
+         Maven             Jenkins , Azure Devops            git, Git-Hub, svn
+       DevOps 
+        docker
+        kubernetes
+        Ansible
+        jenkins pipelin
+        Linux   
+  3. I had developed lots of POCs for my client to improve productivity, removing most of the mnaul tasks and better cost savings .
+
+Daily activities:
+As a Team-Lead ---
+1. Running smoke suite on a daily basis and sending the mail to the team on health of the application and finally consoliodate team member's satus and send that one to customer while presenting the demo.
+2. Verify defects assignd to me & my team and take proper actions .
+3. Task delegate every morning to my mail by sending them proper mail with deadline .
+4. working on Manaul & auomation testing for the stories in current sprint
+5. Since, I developed some utilities on devOps as well integrated with Test Automation, I was more involed 
+   with the devops team too for the deployment activites as well. 
+
+~Oracle:
+  1. Product test development, triaging in different branches for CI-CD , handling a team of 4 people-help them to learn new technologies by providing them KT in techTalk every week.
+  2. Understand in exploring the existing product to come up with Scenarios.
+  3. Spending time with product owner or Scenarios to understand the business of the product.
+  4. Going through production bugs which found previoulsy for the product so that edge test cases are not    missed in writting the tests for upgraded product. 
+
+~Cognizant:
+ 1. I started my career here as a manual/automation tester. Then I becmae an automation team lead and then I   played a role of a  supervisor of my team handling 12 automation team members. I had the responsibility of my team's techincal guide as as well as a reporting manager.
+
+### First action I perform as a tester when application thros any error ###
+   1. Open Developer Tools -> Check in CONSOLE for any JS eerors
+   2. Open Network Tab -> See any request responses failed
+   3. Verify application logs to check the application issue 
+
+Step1:src/main/java ----- 
+i. driverfactory class : driver initialisation from properties file/ jenkins
+ii. RemoteWebDriver -->>set a flag , if flag is true, run in cloud, if flag is set to false, run on local
+iii. utility class: write some utility methods of click , wait and all
+iv. JS Util class
+v. DB Util class
+vi. Excel utility
+
+Step2:pom.xml ----
+<plugins>
+maven-compiler-plugin
+maven-surefire-plugin
+maven-jar-plugin
+<plugins>
+<dependencies>
+selenium-4
+seleniumwebdrivermanager API
+testNG
+log4j
+JSONParser API
+</dependencies>
+
+Step3: --I will create a build (mvn install) with the above project and will create a .jar (FAT JAR)
+this .jar will be having all the exernal dependencies + project libraries + uility classes + driverclass e.t.c
+
+~~Flow is like the follwoing -->(git + jenkins + maven ) integration
+ I kept the entire project in GIT-HUB --->>Jenkins will pull the code from GIT-HUB --> it will ask Maven to generate a build 
+
+Step4: After completing the build, I kept the .jar file in a NEXUS location 
+
+Now we have other product teams as following
+Order Management team -- they will inherit the parent framework (all parent libraries will come auomatically )as top and will write the following
+                         src/main/java - they will maintain OR & Page Actions
+                         src/test/java - they will write test cases 
+
+they need to just incorporate following --
+                testNG.xml -- as a runner file
+                config.properties -- for browser instantiation
+
+
+
+Web.jar                      API.jar                          mobile.jar
+                    selenium + java 
+                    TesNG
+                    Cucumber
+                    utility files
+
+ Now respective team uses those .jar files
+ 
+
+
+ ### CUCUMBER API E2E AUTOMATED FRAEMWORK ###
+ >mvn test -Dcucumber.options="--tags @AddPlace"  
+
+Components:
+i. RestAssured 
+ii.Cucumber
+iii. JackSon API
+iv. Maven
+v. Maven-Cucumber JVM reporting
+vi. Request & Response Spec builder
+vii. Enum class
+viii.Utility class
+ix.Properties file
+x.Logger
+xi.pojo class
+xii.Jenkins
+
+src/test/java:
+features
+ feature file: It covers the tagging, dataOptimization (i.e. scenarioOutline) , parameterization 
+resources
+ i.APIResources.java : Implemented the concept of enum class which is having multiple APIs (constants) to re-use it in the stepdefinition.
+ ii.TestDataBuild.java : Developing the APIPayLoad as part of testdata generation , which will be parsed in stepDefinition file
+ iii. Utils.java : 
+     a. load the requestSpecification service with loging the action (request /response) in a .txt file
+     b. Drving the global variable from external .properties file
+     c. getJsonPath() service which will retrieve the attribute value from corresponding JSON
+iv. StepDefinitions :
+    i.Hooks.java : dependency added in @Before @After components
+    ii.StepDefinition.java :     
+
+Report: Report is the main atractive part on this framework. Severals plugins are integrated in such a way in pom that only a single jenkins build /CI-CD pipeline can perform the entire execution and generate the report
+automatically !!
+
+### DOCKER SELENIUM4 GRID INTEGRATED AUTOMATION FRAMEWORK ###
+
+components:
+
+selenium-java API
+TestNG
+docker
+docker-compose
+docker-hub images
+docker network
+maven
+
+###DATA DRIVEN FRAMEWORK - API BASED FRAMEWORK#####
+Library API
+API examples with PostMan
+Creation of RestAssured Automation test
+Importance of HashMap to JSON Conversion
+Integrating Excel framework to API tests
+Driving the PayLoad data from Excel to API tests
+
+
+#### OAuth 2.0 API ####
+1. It is an industry standard protocol for authorization.
+2. Authorization Code & Client crednetails are most commonly used grant types under OAuth 2.0 umbrella
+3. Back end implementations of autyhorization code with differnet layers of security
+
+Few terminologies:
+Client:   BookMyShow
+ClientID: ID that identifies client
+Client SecretID: BookMyShow registers this with google
+Resource Owner:  Human
+Resource/Authorization server: Google
+
+Flow:
+User signin into Google by hitting Authorization server and application gets the code(i.e OTP)
+Application will use this code to hit google resource server in back end to get access token, firstname,lastname
+Application grants access to user by validating access token
+
+//now when raises ticket req to bookMyShow, bokkmyshow will check the accesstoken(it will be attahced with user's browser cookie throughout the session) sent by user is geting matched of what is there in thier dayabase.
+
+##Ask your developer to increase the longibity of authentication code so that, it stays for a day and we can automate the flow.
+
+*** SOAPUI JAVA FRAMEWORK ***
+Problem-Statement: API tests have to run as part of Jenkins code dev check in and jenkins tool may be hosted either on Dev Servers or Linux servers where SOAPUI cannot be installed. How would we execute tools which are developed in SOAPUI on JENKINS without the availability of SOAPUI?  
+
+Solution: SOAPUI-JAVA Framework !!
+Approach:
+   i. Design and Develop API Automation tests in SOAPUI tool hosted in any server.
+   ii. Save the project and store the project file. THis project file will have the information of all the test cases and asserions, everything. 
+   iii. Pass this project file as input to 'SOAPUI JAVA TESTS'. Methods present inside these JAVA API have the ability to scan the API Test Cases present inside the file. 
+   iv. Convert these JAVA tests into TestNG Tests for more optimization & robustness in framework designing.
+   v. Trigger these TestNG tests from JENKINS !!!
+
+*** BACK END AUTOMNATION ***
+1. Database Testing both Manual /Automation :
+        i. Working on Back End Database Manual & Automation Testing covering both White Box & Black Box.
+        ii. Working on 'Schema Testing' as part of Structural backend and 'Architectural Testing' as part of Functional & Non-Functional Backend.
+        iiii. Developing Stored Procedures, Stored Functions & Triggers based on customer's requirements and business.
+        iv. Environment Set up and Automation Test Development of Stored Procedures ,Stored Functions & Triggers through JDBC.
+        v. DataMapping Testing, CRUD Operations testing in database ,ACID Properties testing & Data Integrity testing.
+2. WebServices/Rest API Automation Testing with SOAP UI client :
+        i. Working on WebServices Manual & Automation testing in SOAP UI client.Performing Advanced Assertions , Properties access-data driven strategy , properties transfer in complex JSON/XML response using SOAP UI . 
+        ii. Performing WebServices end to end Automation using groovy scripting.Worked on testrunner interface for accessing and updating the properties using groovy methods. 
+        iii. Worked on XMLHolder API for parsing the XML Requests and responses and trigerring the SOAP requests thriugh groovy code. 
+        iv. Working on Rest API Manual and Automation testing in SOAPUI client as well. Developing robust automation script using JSON Scrip Assertion window. 
+3. SOAPUI-JAVA Framework Development :
+        Developed a robust Automation framework from scratch where the API tests from the SOAP UI client will be running on a single Jenkins build as part of CI-CD paradigm. 
+4. Mobile Automation Testing using Appium :
+         i. Having a sound experience on Automation testing for native Apps (Android & IOS) and testing mobile browsers.
+         ii. Working on AndroidUIAutomator for handling and identifying Objects and UIAutomator2 framework for test automation.
+         iii. Advanced Gestures Automation with Key Events using Appium
+         iv. Automation on real Android Device Apps with Appium and its rules
+         v. Worked on end to end features & services automation for a Real Time E-commerce App
+            like toast messages verification for error validation , scrolling in product list using 
+            Appium Android Scroll , dynamically selecting product by scanning list based on text , 
+            code optimization using user defined functions.
+         vi. Working on Hybrid App Automation with Appium to switch from Apps to Web Browser.
+         vii. Worked on IOS Automation using Appium XCUI Test framework on MAC.
+         viii. Worked on Automation on IOS advanced Gestures functionalities with Appium.
+         ix. Worked on IOS real device automation testing.   
+
+

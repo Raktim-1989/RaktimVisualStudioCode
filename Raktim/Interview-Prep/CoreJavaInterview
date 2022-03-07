@@ -1,0 +1,824 @@
+Print 1-100 without using loop. recursion 
+
+//use Arrays.fill method
+
+Object num[] = new Object[100];
+Arrays.fill(num, new Object()
+{
+   int count = 0;
+   @Override
+    public String toString()
+      {
+         return Integer.toString(++count);
+      }
+});
+
+System.out.println(Arrays.toString(num));
+
+//output : [1,2,3, ---100]
+
+************************
+1. swap of 2 numbers
+   int a = 10; int b = 20;
+    int k ;
+    
+    k = a;
+    a = b;
+    b = k;
+    syso(a,b)
+
+another approach:
+int a = 10 ; int b = 20;
+b = b +  a;
+a = b - a;
+b = b - a;
+syso(a,b);
+**********************
+2. Reverse of a number:
+   int num = 12345;
+   int rev = 0;
+    while(num!=0)
+{
+rev = rev*10 + num%10;
+num = num/10;
+}
+syso (rev);
+**********************
+3. Reverse a String
+   String s = "Raktim";
+   String rev = "";
+   for(int i = s.length()-1; i>=0;i--)
+{
+   rev = rev + s.charAt(i);      
+}
+syso(rev);
+*********************
+4. Palindrome number
+   int rev = 0;
+   int num = 12321;
+while(num!=0)
+{
+   rev = rev*10 + num%10;
+   num = num/10;
+
+}
+
+if(rev == num)
+{
+   syso("number is palindrome"):
+}
+*******************
+5. Palindrome String
+   String s = "Raktim";
+   String rev = ""
+   for(int i = s.length()-1;i>=0;i--)
+{
+   rev = rev+s.charAt(i);   
+
+}
+
+if(s.equals(rev))
+{
+ syso(string is palindrome)  
+}
+
+*********************
+6. Count number of digits in the number
+int num = 123456;
+int count = 0;
+while(num>0)
+{
+  num = num/10;
+  count ++;
+}
+syso(count);
+**********************
+sum of digits(1 + 2 = 2 ...)
+int num = 1234566;
+int sum = 0;
+while(num != 0)
+{
+
+sum = sum + num%10;
+num = num/10;
+}
+syso(sum)
+************************
+7. count number of even & odd digit
+int num= 12345;
+int odd_count=0;
+int even_count = 0;
+while(num>0)
+{
+    int rem = num%10;
+     if(rem%2 == 0)
+{
+     even_count++;
+}
+else
+{
+odd_count++;
+}
+num = num/10;
+}
+syso(even_count + odd_count)
+**************************
+8. Fibonacci series-  
+int n1 = 0, n2 = 1, sum = 0;
+
+syso(n1 + " " + n2);
+for(int i = 2;i<10;i++)
+{
+ sum = n1 + n2;
+ syso(sum);
+
+n1 = n2;
+n2 = sum;
+}   
+
+***********************
+Largest of 3 numbers using ternary operator
+a>b?a:b   //this expression is, if a is greater than b , then print a as largest else print b as largest
+int largest = a>b?a:b   //storing the largest in a variable
+largest = largest>c?largest:c    //if largest is greater than c then print largest as 'largest' value
+
+*********************************
+Prime number checking
+int num = 23;
+		int count=0;
+		if (num>1)
+		{
+			 for(int i = 1;i<=num; i++)
+			 {
+				if(num%i == 0)
+				{
+					count ++;
+				}
+				 
+			 }
+			 
+			 if(count == 2)
+			 {
+				 System.out.println("number is prime");
+			 }
+			 else
+			 {
+				 System.out.println("number is not prime");
+			 }
+		}
+		
+*************************
+Reversing a linkedlist/arraylist
+LinkedList<Integer> ll = new LinkedList<>();
+
+		ll.add(1);
+		ll.add(2);
+		ll.add(3);
+		System.out.println(ll);
+		
+		Collections.reverse(ll);
+		
+		for(int i : ll)
+		{
+			System.out.print(i + " " );
+		}
+
+****************************
+List & Set ---> Basic programming difference
+
+i. ArrayList<Short> list = new ArrayList<Short>();
+		for (short i = 0; i < 100; i++) {
+			list.add(i);
+			list.remove(i);
+		}
+		System.out.println(list.size());
+
+It will show IndexOutofBound exception // 
+Because, when we say list.remove(int index) -> it will search for '1' index and the list size is now 1 only.
+
+ii. HashSet<Short> shortSet = new HashSet<Short>();
+		for (short i = 0; i < 100; i++) {
+			shortSet.add(i);
+			shortSet.remove(i-1);
+			
+		}
+		System.out.println(shortSet.size());
+		
+In case of Set, (i-1) will 
+Now “i-1” will be converted to an int while evaluation and after that it will autoboxed to Integer object but there is no Integer object in the HashSet,
+ so it will not remove anything from the HashSet and finally its size will be 100.
+becauae operation short - int = int return type -> this will conver to Integer object ->> and there is no Integer object on HashSet thus won;t remove any object
+************************************
+final keyword 
+1. If the final variable is non static and we want to assign , we can write inside constructor
+CoreJava()
+	{
+	 final int i ;
+		i =4;
+	}
+	
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		CoreJava obj = new CoreJava();
+   
+		
+	}
+
+2. Else we can write that inside static method 
+public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		CoreJava obj = new CoreJava();
+		final int i ;
+		i =4;
+	
+***********************************
+Check Array Equals
+
+int[] a1 = {1,2,3,4};
+int[] a2 = {1,2,,3,4};
+
+boolean flag = Arrays.equals(a1, a2);
+Assert.assertTrue(flag);
+
+Another approach:
+boolean flag = true;
+if(a1.length == a2.length)
+{
+     for(int i = 0; i<a1.length;i++)
+            {
+                 if(a1[i] != a2[i])
+                     {
+                         flag = false;
+                     }
+            }     
+
+}
+Assert.assertTrue(flag);
+
+*******************************
+Binray search in array
+int[] array = {10,20,30,40,50};
+
+int key = 5;
+int l = 0;
+int h = array.length -1 ;
+boolean flag = true;
+
+
+while(l<=h)
+{
+    
+    int mid = (l+h)/2;
+    if(array[mid] == key)
+      {
+            System.out.println("element found ");
+            flag = false;
+            break;
+      }
+
+    if(array[mid] < key)
+     {
+           l = mid + 1;
+     }
+     
+     if(array[mid] > key)
+     {
+         h = mid -1 ;
+     }
+  
+}
+
+if(flag == true)
+ {
+    System.out.println();
+}
+******************************
+
+9.Count duplicate elements in an Array
+String[] arr = {"Java", "Jenkins", "C#", "Java", "Jenkins", "Webservice"};
+		// TODO Auto-generated method stub
+		Map<String,Integer> map = new HashMap<String, Integer>();
+		for(String a : arr)
+		{
+			if(map.containsKey(a))
+			{
+				map.put(a, map.get(a)+1);
+			}
+			else
+			{
+				map.put(a, 1);
+			}
+			
+		}
+
+		Set set = map.entrySet();
+		Iterator itr  =set.iterator();
+		while(itr.hasNext())
+		{
+			Entry<String,Integer> entry = (Entry<String, Integer>) itr.next();
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+		}
+		
+********************************************
+10.Count duplicate elements in a String
+
+String input = "JavaJavaEE";
+		
+		Map<Character,Integer> map = new HashMap<Character, Integer>();
+		
+		char[] charArray = input.toCharArray();
+		for(char c: charArray)
+		{
+			if(map.containsKey(c))
+			{
+				map.put(c, map.get(c)+1);
+				
+			}
+			else
+			{
+				map.put(c, 1);
+				
+			}
+			
+		}
+		
+		
+		System.out.println(map);
+		
+		Set set = map.entrySet();
+		Iterator itr = set.iterator();
+		while(itr.hasNext())
+		{
+			Entry<Character,Integer> entry =  (Entry<Character, Integer>) itr.next();
+			System.out.println(entry.getKey() + ": " + entry.getValue());
+			
+			
+			
+		}
+		
+***************************************
+11.Find common elemnets in both array-
+	int[] arr1 = {1,3,5,4,6,7,9,17,21};
+		int[] arr2 = {2,4,6,9,21};
+		
+		
+		Set<Integer> set = new HashSet<Integer>();
+		for(int i = 0;i<arr1.length;i++)
+		{
+			for(int j = 0;j<arr2.length;j++)
+			{
+				if(arr1[i] == arr2[j])
+				{
+					set.add(arr1[i]);
+				}
+			}
+		}
+		
+		
+		Iterator itr = set.iterator();
+		while(itr.hasNext())
+		{
+			int number = (int) itr.next();
+			System.out.println(number);
+		}
+		
+****************************************
+Find common elements in both arraylists:
+
+List<Integer> first = new ArrayList<Integer>();
+		first.addAll(Arrays.asList(new Integer[]{1,22,33,543,23}));
+		
+		List<Integer> second = new ArrayList<Integer>();
+		second.addAll(Arrays.asList(new Integer[] {22,43,1,76,89}));
+		
+		List<Integer> intersection = new ArrayList<Integer>(first);
+		intersection.retainAll(second);
+		System.out.println(intersection);
+		
+
+*******************************
+Removing even numbers from ArrayLists
+
+List<Integer> list = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9,10));
+list.removeIf(num -> num % 2 == 0);
+System.out.println(list);
+
+o/p ->> 1,3,5,7,9
+*******************************
+Retain only specific elements from a single ArrayList
+
+List<String> list = new ArrayList<String>(Arrays.asList("Raktim", "Rahul", "Raktim", "sagar", "Tom"));
+list.reainAll(Collections.singleTon("Raktim"));
+System.out.println(list);
+
+o/p ->> [Raktim,Raktim]
+*******************************
+Creating subList from a List
+
+List<Integer> list = new ArrayLis<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9));
+List<Integer> subList = list.subList(fromIndex , toIndex);
+System.out.println(list);
+*******************************
+Converting ArrayList to Array 
+
+List<String> list = new ArrayList<String>(Arrays.asList("Tom", "Harry", "Raktim"));
+Object[] arr = list.toArray();
+System.out.println(Arrays.toString(arr));
+for(Object o : arr)
+{
+     System.out.println(o); 
+}
+*******************************
+Sorting order of a hashmap
+
+HashMap<String,Integer> map = new HashMap<String,Integer>();
+map.put("A",1);
+map.put("B",2);
+map.put("C",3);
+map.put("D",4);
+
+TreeMap<String,Integer> sortedKeyMap = new TreeMap<String,Integer>(map);
+Set set = sortedKeyMap.entrySet();
+Iterator itr = set.iterator();
+while(itr.hasNext())
+{
+    Entry<String,Integer> entry = (Entry<String,Integer>)itr.next();
+    System.out.prinhtln(entry.getValue() + " : " + entry.getValue());
+}
+//output:: A:1 , B:2, C:3, D:4
+
+TreeMap<String,Integer> sortedKeyMap = new TreeMap<String,Integer>(Collectors.reversedMap());
+//D:4 C:3  B:2  A:1
+
+*******************************
+Differenet kinds of Map creation
+
+Appraoch1: 
+How to create singlemap using Collections.singletonMap()
+Map<String,Integer> map = Collections.singletonMap("test", 100);
+System.out.println(map.get("test"));    //will print 100
+
+Now, if we want to add any more objects inside the map it will throw a runtime error i.e "UnsupportedOperationException"
+
+map.put("raktim", 200);   //runtime error 
+
+Approach2: Using java Stream JDK 8
+Map<String,String> map = Stream.of(new String[][] {
+			{"Rahul", "A Grade"},
+			{"Raju", "B Grade"},
+		}).collect(Collectors.toMap(data->data[0], data->data[1]));
+		
+		System.out.println(map.get("Rahul"));
+
+Approach3: Empty Map
+Map<String,String> map = Map.of();
+System.out.println(map);
+
+Approach4: SingleTonMap
+Map<String,Integer> singletonMap = Map.of("K1", "V1");
+System.out.println(singletonMap.getKey() + ":" + singletonMap.getValue());
+Now if we want to add more map object it will throw runtime exception error : UnsupportedOperationException
+
+****************************
+HashTable,HashMap,Syncronized Hashmap, Concurrent HashMap
+
+i.   HashTable: Synchronized, THread-safe, Null key-value not allowed, slow performance
+ii.  HashMap: Non-syncronized,Thread-unsafe, null key & multiple null values allowed
+iii. SyncronizedMap: Syncronized,Thread-safe, null key & multiple null values allowed, slow performance
+iv.  ConcurrentHashMap: Thread-safe,Fast performance, Null values are not allowed
+                        It is fast because it works on segment basis. One thread works on each segment so, 
+						other thread dont need to 
+                        wait while writing-reading data
+
+
+When I need to make my hasmap syncronized with fast performance, I will go for ConcurrenthashMap 
+exmaple: Flipkart, big million sale, multilple people go for a macbook..
+
+ThreadLock: HashTable uses this concept. That means, if t1 writes any data and if t2 comes to write 
+            somethin it can't. A wait()
+            mechanism will be applied i.e. untill t1 finises off it;s work, t2 can't start. 
+			the object/stack will be locked. This is called thread-lock.
+            Concurrenthashmap overcomes this issue. it wokrs on a segment basis. when t1 
+			writes something in one segment, 
+            t2 comes and writes in other segments.
+            
+******************************
+Converting HashMap into SyncronizedMap
+
+Map<String,Integer> map = new HashMap<String,Integer>();
+map.put("Rahul", 1);
+map.put("Ra", 1);
+map.put("Rah", 1);
+map.put("Rahu", 1);
+
+Map<String,Integer> syncronizedMap = Collections.syncronizedMap(map);
+System.out.println(syncronizedMap );
+
+******************************
+ConcurrentHashMap
+
+ConcurrentHashMap<String,String> map = new ConcurrentHashMap<String,String>();
+map.put("B",1);
+map.put("A",2);
+
+**************************
+Find uniue elements from ArrayLists
+Approach1: Using LinkedHashSet 
+
+ArrayList<Integer> list = new ArrayList<Integer>(Arrays.asList(1,2,3,3,4,4,4,5,5,5,6,7,8));
+LinkedHashSet<Integer> set = new LinkedHashSet<Integer>(list);
+ArrayList<Integer> listsorted = new ArrayList<Integer>(set);
+System.out.println(listsorted);
+
+Approach2: Using Stream JDK 8
+
+List<Integer> uniueList = list.stream().distinct().collect(Collectors.toList());
+System.out.println(uniueList);
+
+******************************
+Find duplicate elements in both sets
+
+		Set<Integer> first = new HashSet<Integer>();
+		first.addAll(Arrays.asList(new Integer[]{1,22,33,543,23}));
+		
+		Set<Integer> second = new HashSet<Integer>();
+		second.addAll(Arrays.asList(new Integer[] {22,43,1,76,89}));
+		
+		Set<Integer> intersection = new HashSet<Integer>(first);
+		intersection.retainAll(second);
+		System.out.println(intersection);
+********************************	
+Find unique elements in both lists/sets
+List<Integer> first = new ArrayList<Integer>();
+		first.addAll(Arrays.asList(new Integer[]{1,22,33,543,23}));
+		
+		List<Integer> second = new ArrayList<Integer>();
+		second.addAll(Arrays.asList(new Integer[] {22,43,1,76,89}));
+		
+		List<Integer> intersection = new ArrayList<Integer>(first);
+		intersection.removeAll(second);
+		System.out.println(intersection);
+		
+*********************************
+Tell the four constructor of HashSet
+1. default constructor HashSet()
+2. HashSet(Collection obj)
+3. HashSet(int initialCapacity)
+4. HashSet(int intcapacity, int loadfactor)
+
+Note: Under each constructor a hashmap object is created whose 'key'; 
+is the value provided in hashset & 'value' is always PRESENT
+PRESENT is a private final static object
+private static final object PRESENT = new Object();
+Example:
+set.add("Raktim");
+set.add("sarkar");
+
+public boolean add(Object o)
+{
+   return  map.put(o, PRESENT);
+}
+
+It maintains a Hashtable
+key     value
+Raktim  PRESENT
+Sarkar  PRESENT
+
+***********************************
+print only numerics/alphabets from string
+String a = "123AMM256CD";
+		
+		String s= "98757FVSBH124";
+		StringBuffer sbf = new StringBuffer(s);
+		//range of numbers 48 - 57 
+		//48 - 0 , 49 -1 ...... 57 - 9
+		
+		for(int i = 0;i < sbf.length();i++)
+		{
+			char c = sbf.charAt(i);
+			if(c <48 || c>57)
+			{
+				sbf.deleteCharAt(i);
+				i--;
+			}
+			
+		}
+		System.out.println("number is " + sbf.toString());
+
+
+*************************************
+print longest substring from a string
+String str = "abcdabe"; //print abcd
+		System.out.println(str.length());
+		
+		Set<Character> set = new HashSet<Character>();
+	     for(int i = 0 ; i<=str.length()-1;i++)
+	     {
+	    	 char c = str.charAt(i);
+	    	 set.add(c);
+    	
+	     }
+	     
+	   Iterator<Character> itr =   set.iterator();
+	   while(itr.hasNext())
+	   {
+		   System.out.print(itr.next());
+	   }
+
+**************************************
+Check whether a string contains vowels
+String input = "Hello";
+		if(input.toLowerCase().matches(".*[aeiou].*"))
+		{
+			System.out.println("vowle present");
+		}
+		else
+		{
+			System.out.println("vowel not there");
+		}
+
+**************************************
+second largest elenent in an array print
+ i. This approach is sorting an array in desxcending order -> 89 67 54 23
+Integer[] a1 = {10,2,31,2,44,5};
+		int temp = 0;
+		
+		for(int i = 0; i<a1.length;i++)
+		{
+			for(int j = i+1; j<a1.length;j++)
+			{
+				
+				if(a1[i] < a1[j])
+				{
+					
+					temp = a1[i];
+					a1[i] = a1[j];
+					a1[j] = temp;
+				}
+				
+			}
+		}
+		
+		for(int a : a1)
+		{
+			System.out.print(a + " " );
+		}
+		
+	//	System.out.println("sorted array is " + a1);
+                 a1[1]; //second largest
+		
+
+  ii. Sorting of an array in ascending order
+      int[] array = {23,45,33,11,67,2};
+      Arrays.sort(arr);
+      syso(Arrays.toString(arr))
+
+  iii. 	Collections.sort(list) // ascending order 	
+********************************************
+1. In java '+' operator precedence is more than '==' operator
+String s1 = "abc";
+String s2 = "abc";
+System.out.println("s1 == s2 is:" + s1 == s2);
+Output: false
+
+Explanation: The given statements output will be “false” because in java + operator precedence is more than == operator. So the given expression
+ will be evaluated to “s1 == s2 is:abc” == “abc” i.e false.
+
+*************************************
+Threads:
+Java Threads
+Multi Tasking ->> Multi Processing & Multi Threading
+Threads allows a program to operate more efficiently by doing multiple things at the same time.
+
+Threads can be used to perform complicated tasks in the background without interrupting the main program
+https://www.youtube.com/watch?v=DTkw1Jq_1Ts&list=PLlhM4lkb2sEh1pBs0KBb63PlKKqRx6M1a
+
+Process: It is a program to execute a task
+Thread: It is a subset of a process
+we can create thread by using : Thread class & runnable interface
+Steps
+1. Extends the Thread class
+2. Override the run() method
+  //task written inside run()
+3. Create object of the main class 
+4. obj.start() /./start the thread
+
+life-cycle of a thread-
+a thread is born (Thread obj = new THread())-----> thread in runnable state (t.start()) --->>>> JVM will allocate CPU to the thread
+--->>> It will move into runnable stage (public void run()) ->>>dead stage
+class Test extends Thread   //step1
+{
+public void run()          //step2: override the run() 
+{
+//task of thread
+}
+
+psvm(String[] args)
+{
+Test  thread = new Test();  //Step3: creating thread
+thread.start();             //Step4: starting the thread(running stage)
+
+}
+
+}
+
+//implements
+
+class Test implements Runnable
+{
+public void run()
+{
+}
+
+PSVM(String[] args)
+{
+Test t = new Test();
+Thread th = new Thread(t);
+t.start();
+}
+
+}
+*****************************
+LinjedList
+for insertion & deletion - linked list is the best
+Linked list disadvantage -->>> if I want to get the address of 10 th element , it will start from 1st,2nd >>>and then 10th. willl take much time.
+linkedList contains the following special methods ---all these methods are stack/queue based implementations (stack - LIFO) Queue (FIFO)
+addFirst()
+addLast()
+getFirst()
+getLast()
+removeFirst()
+removeLast()
+
+for retrieval -- arraylist is the best
+
+****************************************************
+1.Given a string = “123AM256CD”, print 2 output strings one for all the numbers and one for strings. Provide 2 ways. (Asked for the exact code)
+2.Given an integer = 123 , give me the possible combinations ? like 123,132,231,312.
+
+3.int to Integer--> Autoboxing
+int i =10;
+Integer its = new Integer(i);
+syso(its)
+
+Integer to int-->>Unboxing
+Integer its = new Integer(23);
+int i = its.intValue();
+syso(i);
+
+4. Missing element in array {10 12 14 19 21 24}
+
+**************************************************
+### Where have you seen 𝗗𝗮𝘁𝗮 𝗦𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲𝘀 in 𝗿𝗲𝗮𝗹 𝘁𝗶𝗺𝗲 𝗔𝗽𝗽𝗹𝗶𝗰𝗮𝘁𝗶𝗼𝗻𝘀 ? ### 
+𝐒𝐓𝐀𝐂𝐊 :
+
+1) UNDO option
+
+2) Text editor, you push letter by letter to the stack so you erase back.
+
+3) Recursion (in built stack)
+
+
+𝐐𝐔𝐄𝐔𝐄 :
+
+1) Your browser deletes the history past one month.
+
+2) If you delete a picture in your phone, it will be "recently delete" folder which says "the images will be deleted permanently after one week".
+Here all the images are stored in queue so its easier to pop from the rear based on the image deletion date.
+
+3) Waiting list: during online registrations, sometimes you Il be put into waiting list. basically all the requests will be stored in queue.
+
+
+𝐋𝐈𝐍𝐊𝐄𝐃 𝐋𝐈𝐒𝐓 :
+
+1) Browsers Next and Previous Button: a linked list of URLS
+
+2) music player where you can play next or previous song. (Doubly linked list).
+
+3) In ludo game, it had pass the turn to each player in circular fashion (circular linked list).
+
+
+𝐓𝐑𝐄𝐄𝐒 :
+
+1) File system: Folders and subfolders (N-ary tree).
+
+2) e-commerce websites : category -> subcategories -> products
+
+3) Auto-suggestion when you google (Trie)
+
+
+𝐆𝐑𝐀𝐏𝐇𝐒 :
+
+1) Uber, Ola cab booking show nearest available cars (BFS)
+
+2) Maven dependencies build order (Topological sorting (DFS))
+
+3) While booking bus/flights, you get list of available routes.
+
+4) In Facebook, users are considered to be the vertices and if they are friends then there is an edge running between them. Facebooks Friend suggestion algorithm uses graph theory. Facebook is an example of undirected graph.
+
+𝙃𝙖𝙥𝙥𝙮 𝙡𝙚𝙖𝙧𝙣𝙞𝙣𝙜 𝙜𝙪𝙮𝙨 :)
+
+
+

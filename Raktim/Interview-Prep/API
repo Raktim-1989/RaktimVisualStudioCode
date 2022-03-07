@@ -1,0 +1,226 @@
+8. Challenges faced in API-
+   API documentation
+   Access to DB
+   Authorisation overhead
+
+9. List out few authentication techniques in API-
+   Session/cookie based
+   Basic
+   Digest
+   OAuth
+10. What exactly we need to verify in API testing?
+    accuracy of data
+    HTTP status code
+    Resposne time
+    Error codes in case API returns any error
+    Authorisation would be check
+    Non-functional testing such as Performance testing, security testing
+11. Path parameters & query parameters:
+    http://google.com/maps/1234?location=IND
+                         1234 -> path parameter
+                         location = IND query parameter
+12. Core components of HTTP request?
+    HTTP methods
+    URI
+    Resources 
+    Request header -> which carries meta data for HTTP request message
+    Request body -> JSON representation of resource
+
+13. How do you represent a resource in REST?
+    Using HTTP methods
+
+14. POST: Post is used when client create any page to the server and gets a response where to put in
+    PUT: Put is used when client specifies the location of the page
+
+15. Can you use POST instead of PUT to create resource?
+    Yes
+16. What is REST Assured?
+    It is a java library to automate REST API
+ 
+17. Response codes
+    200 - Request successfully completed
+    201 - A new resource successfully created
+    400 - A bad request  //resoource is present but invalid
+    401 - Unauthorized
+    403- Forbidden The client didnt have permission to access the requested resource
+    404 - Not found
+    405 - Method not allowed // API post, but when we use get
+    
+18. Types of API testing
+    Functional Testing
+    Load Testing //performance testing
+    Security testing 
+    Runtime/Error Detection
+19. API & Unit Testing
+ API Testing: Is a black box testing. done by QA. To make sure the core business logic & functionalities are working fine after each build.
+ Unit Testing: Is a white box testing. done by dev. To make sure each code modules as a single unit must be passed before any build.
+
+20. Challenges of API Testing
+   Parameter Selection
+   Parameter combination // while sending request
+   Call sequencing
+   Output verification & validation //response
+   Since GUI is not available providing input values are difficult
+
+21. What are the common API errors?
+    Parameter validation error
+    documentation error
+    missing module error
+
+22. What kind of bugs API testing found?
+    Missing functionality 
+    duplicate functionality
+    fails to handle error gracefully
+    Stress and Load issues
+    Reliability
+    Security
+    Performance
+    Multi Thread issues
+
+23. Resource: REST architecture treats any contents as resources like images, text, videos,graphics, dynamic business infomrtaion.
+              REST server gives access to these resources and modifies them as required. Each resources are identified by
+              URI.
+
+
+
+Rest assured is a java based library to automate Rest API
+
+
+//flow: Add Place -> Update place with new address -> get place to validate if new address is present
+
+//add place API code :
+RestAssured.baseURI = "";
+given().log().all().queryParam("key","raktim123").header().body(JSON body)
+.when().post("/maps/api/place/add/json")
+.then().log().all().assertThat().statusCode(200).body("scope" , equalTo("APP"))
+.header("server" , "apache");
+
+Concept: parson JSON response body using JSONPath class
+
+String response =  given().log().all().queryParameter("key","raktim123").header().body(JSON body)
+.when().post("/maps/api/place/add/json")
+.then().log().all().assertThat().statusCode(200).body("scope" , equalTo("APP"))
+.header("server" , "apache").extract().response().asString();
+
+//using JSONPath class: This class takes string as input and cover that in JSON.
+
+JsonPath js = new JsonPath(response);
+String place_ID = Js.getString("path of Json");
+System.out.println(place_ID);
+
+//update place with a new address
+
+given().log().all().queryParam("key","raktim123").header("content-type, "application/JSON").
+ body("+place_ID+")
+.when().put("maps/api/place/update/json")
+.then().assertThat().log().all().statusCode(200).body("msg", equalTo("Address successfully updated"));
+
+
+//verify whether the address is correctly updated
+
+//get API
+String expectedAddress = "";
+String getResponseAPI = given().log().all().queryParam("key","raktim123")
+.queryParam("place_id", place_ID)
+.when().get("maps/api/place/get/json")
+.then().assertThat().log().all().statuscode(200)
+.extract().response().asstring();
+
+Jsonpath js1 = new Jsonpath(getResponseAPI);
+String actualAddress = js1.getString("address");
+
+****************
+Advanced JSON concepts
+
+
+{
+
+"dashboard": 
+{
+"purchaseAmount": 910,
+"website": "rahulshettyacademy.com"
+},
+
+"courses": [
+
+{
+"title": "Selenium Python",
+"price": 50,
+"copies": 6
+},
+
+{
+"title": "Cypress",
+"price": 40,
+"copies": 4
+},
+
+{
+"title": "RPA",
+"price": 45,
+"copies": 10
+}
+
+]
+
+}
+
+
+
+Questions:
+1. Print No of courses returned by API
+
+JsonPath js = new Jsonpath(the above json);
+js.getint(courses.size());
+
+2.Print Purchase Amount
+
+Dashboard.purchaseAmount;
+
+3. Print Title of the first course
+
+courses[0].title;
+
+4. Print All course titles and their respective Prices
+
+for(int i = 0; i<courses.size();I++)
+{
+     String title  =     js.get("courses["+i+"].title");
+     Int price     =     js.getInt("courses["+I+"].price");
+
+}
+
+5. Print no of copies sold by RPA Course
+
+for(int I =0 ; I<courses.size(); I++)
+{
+     if(courses["+I+"].title.equals("RPA"))
+          {
+  
+                   Int copies = js.get(courses["+I+"].copies);
+          }
+}
+
+6. Verify if Sum of all Course prices matches with Purchase Amount
+Int sum = 0;
+for(int I =0 ; I<courses.size(); I++)
+{
+     Int price = Js.getInt("courses["+I+"].price");
+     Int copies = Js.getInt("courses["+I+"].copies");
+     Int amount = price * copies;
+Sum = sum + amount;
+     
+}
+
+Assert.assertEwquals("js.getInt(dashboard.purchaseAmount)", sum);
+
+
+Sources: 
+https://www.youtube.com/watch?v=DXN_RJzUpE8
+
+https://www.youtube.com/watch?v=8cyMZ87J7zo
+
+https://www.javatpoint.com/api-testing-interview-questions
+
+
+

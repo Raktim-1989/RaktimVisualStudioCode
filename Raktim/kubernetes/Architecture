@@ -1,0 +1,169 @@
+Kubernetes cluster divides into 2 sections --
+ 1. Master :
+      Controller Manager - It makes sure, that the actual state = desired state . e.g. the exact requirements
+       of number of container running inside pods should match
+      etcd cluster : control Manager gets information of pods/container needs from this etcd database
+      kube scheduler: it performs the action instructed by control manager 
+      API-Server: it is the heart of the . it has only access to etcd database  
+    Flow is like follwoing --
+      Contorller Manager -->> API-Server --> api server sends action to bet performed by kube scheduler 
+                                         --> api server confirms data from etcd database
+    i. User wil write one Manifest file / .yaml file /.JSON file and will pass this one to API-Server  
+    ii. API-server will send this request from user to Conmtroller Manager 
+    iii. Controller Manager will verify this one and will send back to API -Server
+    iv. API-Server then will send this one to kube scheduler for action!!
+
+ 2. Worker : :
+      POD: It is an atomic unit of kubernetes. K8s always interact with PODs only
+      kubelet: it is a reporter, it controlls POD. It interacts with the API-server from master . 
+               i. if there is any addiional POD/Container requirements, kubelet will first send that to API-Server 
+               ii. API-Server then will send that to etcd & Controller manager and finally it will send to kube-scheduler for the action.      
+      kube proxy:  It assigns IP address to POD. Container dont have any IP address in K8s
+
+Why there is always a single container inside a single POD?
+Ans -> because kubernetes assigns IP address to POD only, and if multiple containers are there, they will be tightly coupled and if one failes, rest will fail !!   
+
+######KUBERNETES OBJECT###
+It represents a JSON / YAML file i.e. manifest file . we create them and push them into Kubernetes API with kubectl command
+
+1. POD :   manages containers
+2. Replicaset: manages PODs
+3. Services : expose PODs to outside worlds
+4. Secret: configure PODs
+5. ConfigMap: configure PODs
+
+kubectl get pods
+o/p --> testpod 1/1 running
+
+kubectl get pods -o wide
+kubectl describe pods testpod
+kubectl logs -f testpod
+kubectl delete pod podname
+kubectl logs -f testpod
+kubectl delete pod testpod
+
+for multi container POD --
+
+kubectl describe pod testpod
+kubectl logs -f testpod -c cod1 
+kubectl logs -f testpod -c cod2 
+
+
+kubectl exec testpod -it -c cod1 --/bin/bash
+
+//to get the POD ip
+kubectl exec testpod3 -c c00 -- hostname -i
+o/p -> ip of the pod 
+
+
+D:\kubernetes\object>kubectl exec testpod3 -it -c c00 -- /bin/bash
+root@testpod3:/# ps
+    PID TTY          TIME CMD
+     26 pts/0    00:00:00 bash
+     34 pts/0    00:00:00 ps
+root@testpod3:/# ps -ef
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 09:25 ?        00:00:00 /bin/bash -c while true; do echo Raktim-devops-labs; sleep 5 ; done
+root          26       0  0 09:27 pts/0    00:00:00 /bin/bash
+root          37       1  0 09:27 ?        00:00:00 sleep 5
+root          38      26  0 09:27 pts/0    00:00:00 ps -ef
+
+
+################# ENVIRONMENT-VARIABLES CONCEPT ###############
+root@environments:/# ps -ef
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 09:41 ?        00:00:00 /bin/bash -c while true; do echo Hello-Raktim; sleep 5 ; done
+root          31       0  0 09:44 pts/0    00:00:00 /bin/bash
+root          53       1  0 09:45 ?        00:00:00 sleep 5
+root          54      31  0 09:45 pts/0    00:00:00 ps -ef
+root@environments:/# env
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_SERVICE_PORT=443
+MYNAME=RAKTIM
+HOSTNAME=environments
+PWD=/
+HOME=/root
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+TERM=xterm
+SHLVL=1
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+root@environments:/# echo $MYNAME
+RAKTIM
+root@environments:/#
+
+#################### PORT EXPOSE ######################
+D:\kubernetes\object>kubectl apply -f pod3.yaml
+pod/testpod4 created
+
+D:\kubernetes\object>kubectl get pods
+NAME       READY   STATUS    RESTARTS   AGE
+testpod4   1/1     Running   0          77s
+
+D:\kubernetes\object>kubectl describe pod testpod4
+Name:         testpod4
+Namespace:    default
+Priority:     0
+Node:         minikube/192.168.49.2
+Start Time:   Sat, 15 Jan 2022 15:25:54 +0530
+Labels:       <none>
+Annotations:  <none>
+Status:       Running
+IP:           172.17.0.5
+IPs:
+  IP:  172.17.0.5
+Containers:
+  c00:
+    Container ID:   docker://49ae58382e89d67fc5fd4872d664c24884e2c8a8d1219b2f14ebe34b30818ffc
+    Image:          httpd
+    Image ID:       docker-pullable://httpd@sha256:0954cc1af252d824860b2c5dc0a10720af2b7a3d3435581ca788dff8480c7b32
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Sat, 15 Jan 2022 15:27:07 +0530
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-x7hvt (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  kube-api-access-x7hvt:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  85s   default-scheduler  Successfully assigned default/testpod4 to minikube
+  Normal  Pulling    65s   kubelet            Pulling image "httpd"
+  Normal  Pulled     13s   kubelet            Successfully pulled image "httpd" in 52.237030434s
+  Normal  Created    13s   kubelet            Created container c00
+  Normal  Started    12s   kubelet            Started container c00
+
+D:\kubernetes\object>kubectl exec testpod4 -it -c c00 -- /bin/bash
+
+root@testpod4:/usr/local/apache2# curl 172.17.0.5:80
+<html><body><h1>It works!</h1></body></html>
+
+
+
+
+

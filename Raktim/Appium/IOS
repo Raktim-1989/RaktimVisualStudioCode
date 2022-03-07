@@ -1,0 +1,97 @@
+ i. Download IOS server
+ ii. Install XCode to compile app on suitable iphone/ipad    //app should be compatible for that IOS version
+ //the entire code base of the app project will be compiled as a .app file by XCode editor 
+ //then we will install that .app  file inside one simulator to play with the app
+iii. Launch iphone simulator
+iv. SetUp Appium Maven project with Appium Java client JAR s
+    ### dependencies 
+    i. <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+      </repositories>
+
+    ii. <dependency>
+            <groupId>com.github.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>7.4.1</version>
+        </dependency>  
+    
+  How to verify the IOS version in simulator  //we need to know which IOS version my Iphone12 (simulator) supports ?
+    i. brew install carthage      //carthage is used to install apps
+    ii. instruments -s devices    // this command will show , what iphone devices we have in system
+       o/p  iphone 12 Pro (14.2)    [UDID]
+       
+V. Add capabilities object with DesiredCapabilities class
+   Platform_version
+   Device_name
+   automation          //IOS team have developed a framework IOS_XCUI_TEST , which Appium team will use 
+vi. IOSDriver driver = new IOSDriver(new URL("https://localhost:4723"), cap);   
+vi. we will inspect IOS objects using Appium Inspector
+vii. we dont ahve css locator concept in Appium
+     Few Locators as following --
+     driver.findElementByAccessibilityId("Alert Clicks").click();
+
+
+                               APPIUM GESTURES IOS 
+ **********************
+ AUTOMATE SCROLLING  IN IOS
+
+ IOSDriver driver = capabilities();
+ HashMap<String,Object> scrollObject = new HashMap<String,Object>();
+ scrollObject.put("direction","down"); //this is to scrollDown
+ scrollObject.put("name" , "Web View");  //scroll upto the element 'Web View'
+ driver.execjuteSccript("mobile:scroll", scrollObject);   
+ driver.findElementByAccessibilityId("Web View").click();
+
+***********************
+AUTOMATE PICKER WHEELS (DROPDOWN)
+
+driver.findElementByAccessibilityId("Picker View").click();
+driver.findElementByAccessibilityId("Red color component value").sendKeys(80);    //options from dropdown pickers
+driver.findElementByAccessibilityId("Green color component value").sendKeys(220);
+driver.findElementByAccessibilityId("Blue color component value").sendKeys(105);
+
+**********************
+AUTOMATE SLIDERS WITH IOS ELEMENT class
+
+IOSDriver driver = capabilities();
+driver.findElementByAccessibilityId("Sliders").click();
+ISOElement slider = (ISOElement)driver.findElement(By.xpath("//XCUIElementTypeSlider")); 
+slider.setValue("0%");
+slider.setValue("1%");      //if we want to slide (0 % - 90%) , we will set to .90, here we are sliding 100% , thats why set to 1
+slider.getAttribute("value")   //This will return 100%
+
+*********************
+AUTOMATE LONG PRESS apps
+
+import io.appium.java_client.ios.IOSTouchAction;
+import io.appium.java_client.ios.MobileElement;
+import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
+import static io.appium.java_client.touch.offset.ElementOption.element;
+import static java.time.Duration.ofSeconds;
+
+IOSDriver driver = capabilities();
+MobileElement e = (MobileElement)driver.findElement(By.name("Long Tap"));  //we are asking to find out the mobile element , not the web element
+IOSTouchAction t = new IOSTouchAction(driver);
+t.longPress(longPressOptions().withElement(element(e)).withDuration(ofSeconds(2))).release().perform();
+
+*********************
+AUTOMATING TAPS 
+
+import io.appium.java_client.ios.IOSTouchAction;
+import io.appium.java_client.ios.MobileElement;
+import static io.appium.java_client.touch.TapOptions.tapOptions;
+import static io.appium.java_client.touch.offset.ElementOption.element;
+
+MobileElement e = (MobileElement)driver.findElement(By.xpath("//XCUIElementTypeSwitch[1]"));
+IOSTouchAction t = new IOSTouchAction(driver);
+t.tap(tapOptions().withElement(e)).perform();
+
+**********************
+
+
+
+
+

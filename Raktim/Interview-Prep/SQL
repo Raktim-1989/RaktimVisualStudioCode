@@ -1,0 +1,136 @@
+***********************************
+SQL Interview Questions
+
+1. DDL -> Data Definition Lamguage 
+   commands: CREATE, ALTER, DROP, TRUNCATE, COMMENT, RENAME
+   DML -> Data Manipulation language
+   commands: SELECT, INSERT,UPDATE,DELETE,MERGE
+   DCL: Data Control language 
+   command: GRANT , REVOKE
+
+2. select DISTINCT * from table -> filter duplicate from table
+3. Difference between CHAR & VARCHAR data types: 
+   CHAR: Chracter limit is fixed when we provide CHAR data type example mmddyyyy-> char(8)
+   VARCHAR: it;s not fixed length can vary as per the below example
+   example:
+   CREATE TABLE company(name varchar(50) , branchcode varchar(50), employees int);
+4. Difference between NOW() & CURRENT_DATE()
+   NOW() -> Current Date & time
+   CURRENT_DATE -> Current date only
+
+Company
+Name             BranchCode        Employees
+Infosys          INHYD               200
+Deloitte         DELNYC              540
+Infosys          INLON               100
+Deloitte         DELBLR              390
+Google           GSFO                779
+RaktimLab        RSHYD		     120
+
+
+CompanyAddress
+BranchCode                Location
+INHYD                     Hyderabad
+DELNYC                    NewYork
+INLON                     London
+DELBLR                    Bangalore
+GSFO                      Sanfransisco
+RSHYD                      Hyderabad							
+Query1: List down the Compamy name & location whose employee count less than 120?
+5. Joins & Group By?
+  Joins >>>              select * from company as c join companyaddress as ca on c.branchcode = ca.branchcode where c.employees<120;
+  GroupBy >>>            
+
+Query2: Get the count of employees working in each location?
+select c.location,SUM(ca.employees) from company as c join companyaddress as ca on c.branchcode = ca.branchcode group by location;
+
+Result
+Hyderabad   320
+NewYork     540
+ and so on
+
+6. Left & Right Joins
+   
+StudentDeyailsRO(rahul organization)
+Name     ID      Age       Gender     Location
+Sai      1        20         M          Kolkata
+Baba     2        30         M          Punjab
+Ram      3        40         M           Delhi
+Shyam    4        50         F          Kolkata
+Ajay     5        60         M           Lucknow
+Alu      6        70         M            Kolkata	
+
+
+Grades
+Grade    ID
+A        2
+B        3
+A        1
+C        5
+B        7
+
+
+Query1: Write a query to fetch the student details of RO who pass the exam?
+
+Query: Get student details of RO with result who appeared in exams
+Query3: Get all the student details in result who passed in exams
+
+
+7. What are the different types of strings used in table columns?
+  CHAR
+  VARCHAR
+  TEXT
+  ENUM
+8. RENAME TABLE -> RENAME TABLE old_table TO new_table_name
+9. LIKE operator -> select * from table where column like 'a%'; //this will return rows having column anme start with A followed by n number of characters
+                    select * from table where column like 'a_'; // this will return rwos having column name start with a followed by only one character
+10. BLOB Data type ---->> Large object holding huge data
+11. Retrieving data in sorted order from the table ---> Order By clause 
+    select * from table order by columnName desc 
+12. Creating a  view : create view viewname as select * from tablename where column_name like 'a%';
+    This view name is like a table which contains only the record columns started a
+    Now, from next time, view will be like another table which will contain only those filter records 
+13. LIMIT ->>> It will allow to retrieve number of records as we will specify in the following
+    select * from table where column_name like 'a%' limit 2 ; //it will retrieve top 2 records 
+14. Difference between WHERE & HAVING clause : 
+    Having should be used when we will be using group by 
+    select * from tablenam1 inner join tablenam2 on tablenam1.col1 = tablenam2.col2 groupby tablenam1.col1 having tablenam1.col1 <100 ;
+15. Find second largest salary from table:
+    Name     Salary
+---------------
+abc     100000
+bcd     1000000
+efg     40000
+ghi     500000
+
+Query1: Find the largest salary from above table
+        select e.Name , MAX(e.Salary) from Employee as e    //will fetch bcd     1000000
+Query2: Find the second largest salary from the above table
+        select e.Name,MAX(e.Salary) from Employee e where e.Salary < (select MAX(e.Salary) from Employee e);
+
+16. Drop table table_name -> will remove the table
+    Truncate table table_name -> remove the data from the table
+17. ALTER table tablename
+    add columnname datatype
+    
+   ALTER table tablename
+   drop column columnname
+18. Constraints : Its a rule and checkpoints , we will mention during the time of table creation
+    NOT NULL
+    UNIQUE
+    PRIMARY KEY
+    FOREIGN KEY
+    CHECK
+    
+CREATE TABLE tablename(employee varchar(255), ID int , NOT NULL(ID) );    
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255) DEFAULT 'Sandnes'
+    CHECK (Age>=18)
+);
+      
+  
+******************************

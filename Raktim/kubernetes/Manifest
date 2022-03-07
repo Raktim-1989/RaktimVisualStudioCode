@@ -1,0 +1,47 @@
+## If we mention '---' is seperates multiple manifests under a single file e.g. mukltiple pods seperated by '---'
+## If we mention '#' it will treat as a comment out block 
+StudentName:
+  Student1: Raktim
+  Student2: Sarkar
+  Student3: Rishi
+     Age: 12
+     Class: 2
+
+
+Creating a group 
+  - StudentDetails:
+       name: Rahul
+       age: 34
+  - Student1Details:
+       name: Sarkar
+       age:45
+
+ ************************************************
+ multi container pod
+kind: Pod
+apiVersion: v1
+metadata:
+  name: testpod3
+spec:
+  containers:
+    - name: c00
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo Technical-Guftgu; sleep 5 ; done"]
+    - name: c01
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo Hello-Bhupinder; sleep 5 ; done"]
+                 
+
+************POD ENVIRONMENT  VARIABLES
+kind: Pod
+apiVersion: v1
+metadata:
+  name: environments
+spec:
+  containers:
+    - name: c00
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo Hello-Bhupinder; sleep 5 ; done"]
+      env:                        # List of environment variables to be used inside the pod
+      - name: MYNAME
+        value: BHUPINDER                 

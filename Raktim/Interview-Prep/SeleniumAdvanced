@@ -1,0 +1,819 @@
+***************Database*******************
+JDBC
+Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BusinessRelease");
+Statement statement = con.createStatement();
+String query = "";
+ResultSet rs = statement.executeQuery("");
+boolean status = true;
+while(rs.next())
+{
+String firstname = rs.getString("Colunname");
+String lastname = rs.getString("Colunname");
+
+if(firstname.equals(stringfromUI) && lastname.equals(stringfromUI))
+{
+   syso(record found)}
+status = false;
+break;
+}
+}
+if(status == true)
+{
+syso(record not foundin table)
+}
+
+***********FileUpload******************
+1. if HTML have type = 'file' do sendkeys("");
+2. Using Robot class
+   StringSelection ss = new StringSelection("")//file path
+   Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss , null); //copyfile in clipboard 
+   rb.keyPress(keyEvent.VK_CONTROL) //press control 
+   rb.keyPress(keyEvent.VK_V)
+   rb.keyPress(keyEvent.VK_ENTER)
+   rb.keyRelease(keyEvent.VK_ENTER)
+
+**************FileDownload************
+String location = System.getProperty("user.dir") + "\\downloads\\";    //set the location path where to download
+HashMap hm = new HashMap();
+hm.put("download.default_directory", location);
+ChromeOptions options = newChromeOptions (driver);
+options.setExperimentalOption("prefs", hm);
+
+************Cookies*****************
+1.Set<Cookie> listCookies = driver.manage().getCookies();
+listCookies.size();
+
+for(Cookie c : cookies)
+{
+c.getName();
+ c.getValue();
+}
+2.driver.manage().deleteCookie("id")
+3.driver.manage().deleteallCookies();
+4. driver.manage.addCookie("Cookie ref");
+
+*************Javascriptexecutor*******************
+1. flash an element
+2. draw a border in an element
+3. get title of a page
+4. click action
+5. generate alert
+6. refresh page
+7. scroll up /down
+
+************Compare Dropdown options from UI with expeced options in Excel******
+ //Excel handling 
+ File file = new File(C://Raktim/xlsx);
+ FileInputStream fis = new FileInputStream(file);
+ XSSFWorkbook wb = new XSSFWorkbook(fis);
+ XSSFSheet sh = wb.getSheet(0);
+ int totalCells = sheet.getRow(0).getPhysicalNumberOfCells(); //totalcells in 0th row
+ int cellNumber = 0;
+ ArrayList<String> expectedList = new ArrayList<String>();
+  ArrayList<String> actualList = new ArrayList<String>();
+ for(int i = 0; i<totalcells;i++)
+ {
+     String currentCellData =  sheet.getRow(0).getCell(i).getStringCellValue();
+     if(currentCellData.equalsIgnoreCase("Fruits"))
+     {
+          cellNumber = i;
+          break;
+     }
+ }
+
+ //calculate total number of Rows
+ int totalRows = sh.getPhysicalNumberOfRows();
+ //loop all cell values for that cell i.e. cewllNumber
+ for(int j = i;j<totalRows;j++)
+ {
+     Cell cell  =sh.getRow(j).getCell(cellNumber);
+     if(cell == null || cell.getCellType() == CellType.BLANK)
+     {
+           break ;                 //this means a blank row started and records completes in the sheet 
+     }
+     String cellData = sh.getRow(j).getCell(cellNumber).getStringCellValue();
+     expectedList.add(cellData); 
+ }
+
+wb.close();
+
+//Create another list and get all the data from UI
+
+List<WebElement> list = driver.findElements(By.xpath("//select[@class = '']//option[text() != '']"));
+for(WebElement e : list)
+{
+     String options = e.getText();
+     actualList.add(options);
+}
+
+//start comparison 
+if(expectedList.size() == actualList.size())
+{
+      for(int i = 0 ; i <expectedList.size();i++)
+      {
+             if(expectedList.get(i).equalsIgnoreCase(actualList.get(i)))
+             { 
+                continue;
+             }
+             else
+             {
+                   System.out.println("Mismtach between options ====> " + "\n" + 
+                     "Expected ==> " + expectedList.get(i) + "\n" + 
+                     "Actual ==> " + actualList.get(i) );
+             }
+             
+      }
+}
+else
+{
+    System.out.println("Excel shett DD options and UI are not matching ......")
+}
+
+******** WebElement isDisplayed or NOT Displayed for hidden elements *****
+Hidden elements: elements who are available in DOM , but not present in UI .. we need to follow the below approach
+               If we use isDisplayed() it will return true, becuase it will grab from DOM. 
+String value = driver.findElement(By.xpath(locator)).getAttribute("style");
+if(value.equals("display:none"))
+{
+      System.out.println("Element not visible in UI  .............");
+}
+
+**********ZoomIn & ZoomOut in browser window*******
+1. Robot class
+   //to zoom in 3 times
+   Robot robot = new Robot();
+   robot.keyPress(keyEvent.VK_CONTROL);
+   for(int i = 0 ; i<3;i++)
+   {
+       robot.keyPress(keyEvent.VK_ADD);
+       robot.keyRelease(keyEvent.VK_ADD);
+       
+   }
+   robot.keyRelease(keyEvent.VK_CONTROL);
+
+   //to zoom out 3 times
+   Robot robot = new Robot();
+   robot.keyPress(keyEvent.VK_CONTROL);
+   for(int i = 0 ; i<3;i++)
+   {
+       
+       robot.keyPress(keyEvent.VK_SUBTRACT);
+       robot.keyRelease(keyEvent.VK_SUBTRACT);
+       
+   }
+   robot.keyRelease(keyEvent.VK_CONTROL);
+//another way to zoom-out
+CNTRL + 0 -> back to normal zoom (100%) 
+
+2. Using JavaScriptExecutor
+
+*********************AUTO SUGGESTIVE DROPDOWN*************
+Dynamic dropdpwn:
+We are using Javascriptexecutor here since, the textvalue is disabled in the texfiled for the folloiwng application 
+
+driver.get("https://ksrtc.in");
+WebElement from = driver.findElement(By.xpath(""));
+from.sendKeys("Ben");
+String script = "return driver.getElementByID('fromPlace').value"
+JavaScriptExecutor js = (JavaScriptExecutor)driver;
+String text = (String)js.executeScript(script);
+System.out.println(text) // it should print the value displayed in textBox
+//now keep looping as following untill 'BENGALURU AIRPORT' is comming and keep hitting Keys.DOWN 
+while(!text.equalsIgnoreCase("BENGALURU AIRPORT"))
+{
+   from.sendKeys(Keys.DOWN);
+   text =  (String)js.executeScript(script);
+
+}
+from.sendKeys(Keys.ENTER);
+
+**************click links into other tabs*************
+Actions a = new Actions(driver);
+a.keyDown(Keys.CONTROL).moveToElement(elementXpath).click().build().perform();
+a.keyDown(Keys.CONTROL).moveToElement(elementXpath).click().build().perform();
+a.keyDown(Keys.CONTROL).moveToElement(elementXpath).click().build().perform();
+//it will open 3 tabs for 3 links 
+a.keyUp(Keys.CONTROL).build().perform(); //releasing control button
+Set<String> windows = driver.getWindowHandles;
+Iterator<String> itr = windows.iterator();
+while(itr.hasNext())
+{
+    driver.switchTo().window(itr.next());
+    System.out.println(driver.getTitle());  //it will fetch the title of each page 
+}
+
+**** doct & text() operator in xpath ****
+### 1st DOM : Using DOT function
+<p class = "checkbox-gp-345">
+<input type = "checkbox" class = "" id = "" >
+<label for = "" class = checkbox-name ></label>
+"
+checkbox1
+"
+xpath for above :  //p[contains(.,"checkbox1")]
+
+### 2nd DOM using text()
+<p class = "checkbox-gp-345">
+<input type = "checkbox" class = "" id = "" >
+<label for = "" class = checkbox-name >CheckBox1</label>
+
+xpath for above : //label[text() = 'CheckBox1']
+                  //label[text() = 'CheckBox1']//..      //It will go in <p 
+                  //label[text() = 'CheckBox1']//..//input    //it will go <input  
+**********************selenium4*************************
+
+methods in driver
+1. driver.getTitle()
+2. driver.getPageSource();
+3.driver.getCurrentUrl();
+4. driver.getWindowHandle();
+5. driver.getWindowHandles();
+6. driver.switchTo();
+
+methods in driver.manage().
+1. driver.manage().window().maximize();
+2. driver.manage().timeOuts().implicitlyTimeout(20, TimeUnit.SECONDS);
+3. driver.manage().deleteAllCookies(); //all cookie relatd methods
+
+methods in driver.switchTo()
+1. driver.switchTo().alert();
+2. driver.switchTo().frame();  //index & StringName & WebElement(frame element)
+3.driver.switchTo().window();  //StringName
+
+methods in driver.navigate()
+1. driver.navigate().to("url")
+2.driver.navigate().back();
+3.driver.navigate().forward()
+4. driver.navigate().refresh()
+
+1. tooltip:
+logic: grab the title of the element
+String tooltip = element.getAttribute("title");
+
+2. open a link to a new tab
+logic: using keys function
+String click = keys.chord(keys.CONTROL, keys.RETURN);
+element.sendKeys(click);
+
+3. How to open URLs in multiple windows
+ logic: driver.get("url1");
+        driver.switchTo().newWindow(WindowType.tab);
+        driver.get("url2")
+4. capture size & location of webelement
+   element.getLocation() ; //return both x & y co-oridnates
+   element.getLocation().getX();
+   element.getLocation().getY();
+
+   element.getSize().getHeight()
+   element.getSize().getWidth()
+
+*************************************************
+keys event
+Actions action = new Actions(driver);
+cntrl + A  ---> action.keyDown(Keys.CONTROL)
+                action.sendKeys("a")
+                action.keyUp(Keys.CONTROL) 
+                action.perform();  
+Cntrl + C  ----> action.keyDown(Keys.CONTROL)
+                 action.keyDown(Keys.CONTROL)
+                action.sendKeys("C")
+                action.keyUp(Keys.CONTROL) 
+                action.perform();
+                
+tab      ------> action.sendKeys(Keys.TAB)
+                 action.perform();  
+Cntrl + V -----> action.keyDown(Keys.CONTROL)
+                action.sendKeys("V")
+                action.keyUp(Keys.CONTROL) 
+                action.perform();
+
+**********************************************
+1. Handling a slider
+   logic: i. get the location & size of the webElement
+          ii.   Action.dragAndDropBy(element, xAxis,Yaxis);
+
+element.getLocation() // get Xaxis & Yaxis
+Actions action = new Actions(driver);
+action.dragAndDropBy(element, increasX, 0).perform();
+
+2. MouseHover 
+   Actions act = new Actions(driver)
+   act.moveToElement(element).perform();
+
+3. Right click
+   Actions act = new Actions(driver)
+   act.contextClick(element).perform();
+
+4. Double click
+   Actions act = new Actions(driver)
+   act.doubleClick(element).perform();
+5. Drag and Drop
+
+   WebElement src
+   WEbElement target
+   Actions action = new Actions(driver);
+   action.dragAndDrop(src,target).build().perform(); 
+
+6. Grab text from textbox: element.getAttribute("value")
+getText() -> returns the inner text of the element
+getAttribute("attr name") -> returns the attribute value of that HTML element
+
+******************Dropdowns***********
+1. Select select = new Select(element);
+   select.selectByVisibleText("Denmark");
+   select.selectByIndex(0);
+   select.selectByValue("attribute value name") ; //
+
+2.Select dropdown without select class:
+  first :  List of all dropdown options
+   List<WebElement> option = element.getOptions(); 
+   for(WebElement o : option)
+   {
+      if(o.getText().equals("India"))
+{
+          o.click();
+}
+   }  
+
+3.  write a generic method for multiple dropdown handling
+     public static void selectOptionFromDropdown(WebElement el, String value)
+       {
+                  //Select select = new Select(el);
+                  List<WebElement> listOption = el.getOptions();
+                  for(WebElement e : listOption)
+                      {
+                         if(e.getText().equals(value)) 
+                                {
+                                    e.click();
+                                     break;
+                                }
+
+
+
+                      }
+       } 
+  
+Public static void main(String[] args)
+{
+        selectOptionFromDropdown(elementname1, "India");
+        selectOptionFromDropdown(elementname2, "WB");
+        selectOptionFromDropdown(elementname3, "Kolkata");
+}
+
+4. Bootstarp dropdown handling
+   Bootstarp is a popular development framework for developing websites
+   Dropdown having 'button' tag is called bootstrap dropdown
+   dropdown having ul & li is bootstrap
+
+List<WebElement> dropdown = driver.findElements(By.xpath(""))/l1;
+for(int i = 0; i<dropdown.size();i++)
+{
+    if(dropdown.get(i).getText().equals("account"))        
+              {
+                      drodown.get(i).click();
+                      break;
+              }
+}
+
+5. Check whether dropdown options are sorted-
+ArrayList list1 = new ArrayList();
+ArrayList list2 = new ArrayList();
+
+Select select = new Select(ele);
+List<WebElement> list = select.getOptions();  
+for(Element l : list)
+{
+    list1.add(l.getText());
+    lis2.add(l.getText()):  
+}
+
+//sort the first list and compare with second, it still, both the same, print the message
+
+Collections.sort(list1);
+if(list1.equals(list2))
+{
+    syso("dropdown sorted")
+}
+else
+{
+syso("dropdown unsorted"):
+}
+ 
+6. Auto suggestive dropdown
+   //send the input to textbox
+   //span the elements (table type) displayed against the search criteria
+   //iterate the loop and select the specific dropdown value
+
+   driver.findElement(By.xpath("")).sendKeys("selenium");
+    List<WebElement> list = driver.findElements(By.xpath());
+     for(WebElement l : list)
+       {
+          if(l.getText().contains("driver"))
+                 {
+                       l.click();
+                       break;
+                 }
+        }
+
+**************************************
+ Checkboxes handling
+
+1. List<WebElement> checkBox = driver.findElements(By.xpath("//tag[@attname = 'atvalue' and contains(@id, 'day')"));
+   int totalcheckbox = checkbox.size();
+   for(WebElement c : checkBox)
+     {
+          c.click();
+     } 
+   
+2. checkbox selection based on choice //monday & sunday
+   for(WebElement c : checkBox)
+    {
+        String checkBoxname = c.getAttribute("id");
+             if(checkBoxname.contains("monday") || checkBoxname.contains("sunday"))
+                           {
+                                      c.click();
+                           }
+    }
+ 
+3. select the last 2 checkbox-
+   int totalcheckbox = checkbox.size();
+   for(int i = 0 ; i<checkBox.size(); i++)
+     {
+               if(i == (totalcheckbox-1) || i == (totalcheckbox-2))
+                 {
+                           checkBox.get(i).click();
+                 }
+     }
+*************DatePickers********************
+logic:String month = Jan ; date = 21
+1.Month-year selection
+while(true)
+{
+   String month-Date = element.getText();
+   String[] arr =month-date.split("-"); 
+   String month1 = arr[0];
+   String date1 = arr[1];
+   if(month.equals(month1) && date.equals(date1))
+{
+      break;
+}
+else
+{
+    nextElementButton.click();
+}
+}
+//////////////////////////
+2. Date Selection   
+    List<WebElement> list = driver.findElements(By.xpath(""));    //list of td 
+    for(WebElement e : list)
+{
+     String date = e.text();
+     if(date.contains(21))
+{
+         e.click();
+         break;
+}       
+
+}
+
+**************************************************
+1.Alert
+ Alert alert = driver.switchTo().alert();
+ alert.accept();
+ alert.dismiss();
+ alert.getText();
+ alert.sendKeys("welcome")
+
+2. Pop-up
+   URL: http://the-internet.heroukaopp/basic_auth
+   it will ask to enter username and password
+To handle this the sytax should be
+   http://admin:admin@the-internet.heroukaopp/basic_auth
+
+3. Browser settings:
+   ChromeOptions options = new ChromeOptions();
+   options.addArguments("--disable-notifications");
+
+**************************************************
+1. Number of links
+driver.findElements(By.tagName("a")).size();
+for(int i = 0; i<list.size();i++)
+{
+   list.get(i).getText();
+   list.get(i).getAttribute("href");
+}
+
+2. Broken links -> These are links having no target page in the server
+driver.findElements(By.tagName("a")).size();
+for(int i = 0; i<list.size();i++)
+{
+   String url = list.get(i).getAttribute("href");
+   if(url == null || url.isEmpty())
+   {
+   syso("invalid link");
+continue;
+   }
+URL link = new URL(url);
+HttpURLConnection con = link.openConnection();
+con.connect();
+if(con.getResponseCode()>=400)
+{
+   syso("broken link" + con.getResponsCode() );
+}
+else
+{
+syso("valid link " + con.getResponseCode());
+}
+
+***************************************************
+Handling dynamic pop-ups
+
+sometimes pop-ups comes unexpectedly.To handle this ,use folloiwng code
+
+WebDriverWait wait = new WebDriverWait(driver,60);
+if(wait.until(ExpectedConditions.alertIsPresent()) == null)
+{
+      System.out.println("No Alert displayed");
+
+}
+else
+{
+   driver.switchTo().alert().accept();
+   //OR
+   driver.switchTo().alert().dismiss();
+}
+***************************************************
+window handling
+
+driver.getWindowHandle() // ID of the single browser window
+}
+
+*****************************
+clear text field without .clear()
+Actions a = new Actions(driver);
+a.moveToElement(element).keyDown(keys.CONTROL).sendKeys("a",keys.DELETE)
+
+
+****************************
+synchronization code
+
+1. ExplicitWait-
+WebDriverWait wait = new WebDriverWait(driver,20);
+WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
+element.click();
+
+//suppose , we have multiple elements and we want to invoke this explicit wait for all those. we will create one generic method and will call whenever we need
+public static WebElement waitExplicitforElement(WebDriver driver, By locator, int timeout)
+{
+     WebDriverWait wait = new WebDriverWait(driver,timeout);
+     wait.until(ExpectdCondtions.visibilityOfElementLocated(locator)); 
+     return driver.findElement(locator);     
+
+}
+
+//now call the above method	
+By locatorMain = By.xpath(""); 
+WebElement element = waitExplicitforElement(driver,locatorMain, 20);
+element.click(); //action of that element 
+
+2. Fluent wait ---> same as explicit wait with more flexibility in polling time and ignoring exceptions
+   Timeout
+   Polling every 2 seconds
+   Exception ignoring
+
+**********************************
+JavascriptExecutor js = (JavascriptExecutor)driver;
+
+js.executeScript("arguments[0].click();",element); 
+ //click
+js.executeScript("history.go(0)");    //refresh
+driver.get("https://www.guru99.com");
+driver.navigate.to(driver.getCurrentURL());
+
+js.executeScript("alert('"+message+"')");    //generate alert & retrieve message
+js.executeScript("return document.title;").toString();
+
+***********************************
+WebDriver special cases
+
+1. Difference between get() & navigate()
+   driver.get() -> it will first hit the url and then it will wait untill all the componets of the page is loaded before going to next line of code
+   driver.navigate().to("url") -> it won't wait and will immediately jump to the next line of code. But it has other methods
+                                   driver.navigate().back()    driver.navigate().forward()     driver.navigate().refresh()
+2. Quit () & close()
+   driver.close() -> it closes only the current window
+   driver.quit() -> will close all the browser instances.
+3. handling https certifications
+   DesiredCapabilities cap = DesiredCapabilities.chrome();
+   cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+4. How to use contains regular expression in Xpath?
+   id = u012, u034, u056 .. it's changing
+   //tagname[contains(@id,'u')]   ->>>script will never fail now. 
+5. How to use regular expression in CSS?
+   tagname[id*='u']
+6.How to validate if element is visible or not?
+  driver.findElement(By.xpath("")).isDispalyed()
+7. How to enter text in capslock
+   driver.findElement(By.xpath("")).sendKeys(keys.SHIFT,"raktim");
+  
+******************************
+xpath: 
+//*[@typr = 'checkbox' and contains(@id,'day')]
+*********************************
+TestNG
+https://testng.org/doc/documentation-main.html
+
+1. exclude mechanism under a single class
+  <classes>
+    <class name = "test.day3">
+      <method>
+         <exclude name = "mobileapp"/>
+      </method>
+    </class>
+  </classes>
+
+2. same for include
+3. RegEx on TestNG.xml
+   If we want to exclude 50 tets cases under a particular module like mobile  do like following-
+          <exclude name = Mobile.*/>
+4. Group
+   @Test(groups={"smoke"})
+In TestNG.xml ->>> 
+<test>
+   <groups>
+     <run>
+      <include name = "smoke"/>
+     </run>
+   </groups>
+</test>
+
+5. 	(dependsOnMethods={"methodname"}) 
+6. (enabled = false)
+7. Parametrization in TestNG.xml
+   under <suite>
+         <parameter name = "URL" value = "google"/>
+
+in class file->> on top of your particular @Test
+
+@Parameters({"URL"})
+@Test
+public void parameter(String url)
+{
+     System.println(url);
+}
+  
+8. Listener
+   it will implement ITestListener interface
+   unimplemented methods
+   onTestStart(ITestResult result)
+{
+result.getName();
+}
+   onTestFailure()
+   onTestSkipped()
+   onStart()
+   onFailed()
+
+In TestNG.xml tweak the following way ->>suite level
+<listeners>
+<listener class-name = "test.listeners"/>
+</listeners> 
+  
+9. Parallel testing: run multiple test parallel//    2 test as per following
+   <suite name = " bank"  parallel = "test" thread-count=2 >
+
+10. DataProvider
+        @DataProvider
+	public Object[][] shipmentData() throws Exception
+	{
+	     Object[][] data = new Object[2][5];
+	     String directory = System.getProperty("user.dir");
+	     path = directory + File.separator + "shipmentdetails.xlsx";
+	     System.out.println(path);
+	     FileInputStream fis = new FileInputStream(path);
+	     wb = new XSSFWorkbook(fis);
+	     sh = wb.getSheet("Data");
+	     for(int i = 0; i<1; i++) 
+	     {
+             row = sh.getRow(rowindex);
+	    	for(int j = 0; j<5;j++)
+	    	{
+	    		cell = row.getCell(j);
+	    		DataFormatter df = new DataFormatter();
+	    		data[i][j] = df.formatCellValue(cell);
+	    		//System.out.print(data[i][j] + " " );
+	    	}
+	    	 System.out.println();
+	     }
+	   
+	     return data;
+	    
+//Parse data from Shipmentdetails.xlsx and return the 2-dimensional array
+	    
+	}
+	@Test(dataProvider = "shipmentData")
+	void testShipment (String orginPort,String destinationPort,String railModeCharge,String roadModeCharge,String airModeCharge) throws InterruptedException
+	{}
+
+***********************************
+How to execute only failed test case using TestNG framework
+
+###How to execute failed test cases in Selenium WebDriver using IRetryAnalyzer in TestNG.
+###These failures might not necessarily be because of product bugs.
+###These failure can be because of following reasons:
+###author-Raktim Sarkar
+
+There are two ways to implement retry logic using TestNG Listener:
+1. By specifying retryAnalyzer value in the @Test annotation //TestDemo.java
+2. By adding Retry analyser during run time by implementing IAnnotationTransformer interfaces //MyTestsMultiple.java
+
+
++Random browser issues
++Browser becoming unresponsive
++Random machine issues
++Server issues like unexpected delay in the response from server
++Application not responding properly
++Application is very slow
++Network is very slow, hence app is very slow
++Ajax Component could not be loaded properly
++HTML DOM is slow
+
+Solution: Using IAnnotationTransformer & IRetryAnalyzer interface
+
+package com.qa.analyzer;
+
+import org.testng.IRetryAnalyzer;
+import org.testng.ITestResult;
+
+public class RetryAnalyzer implements IRetryAnalyzer {
+
+    int counter = 0;
+    int retryLimit = 3;
+    @Override
+    public boolean retry(ITestResult iTestResult) {
+
+        if(counter < retryLimit)
+        {
+            counter ++;
+            return true;
+        }
+        return false;
+    }
+}
+
+
+package com.qa.analyzer;
+
+
+import org.testng.IAnnotationTransformer;
+import org.testng.annotations.ITestAnnotation;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+public class MyTransformer implements IAnnotationTransformer {
+
+public  void transform(ITestAnnotation annotation, Class testClass, Constructor test, Method testMethod)
+{
+       annotation.setRetryAnalyzer(RetryAnalyzer.class);
+
+}
+
+
+}
+
+In the Listener class mention this "IAnnotationTransformer " file
+	
+*************************************************
+Headless testing
+1. download htmlunitdriver jar file
+WebDriver driver = new HtmlUnitDriver();
+
+//tetsing is happening behind the scene
+//it's very fast -- improves performance
+//we can't do mousemovement, doublecick,drag & drop
+example: HtmlUnitDriver -Java
+         PhantomJS ----Javascript
+************************************************
+
+### EXCEPTION ###
+CHECKED EXCEPTION ---->
+
+1. MalformedURLException
+   URL url = new  URL("https://google.com")  //will show MalformedURLException
+2. FileNotFoundException
+   FileInputStream fis = new FileInputStream("D://raktim.properties");  //FileNotfoundexception handling 
+3. Properties prop = new Properties();
+   prop.load(fis);                          // IOException handling 
+4. Thread.sleep(3000);                     //Interrupted Exception
+
+UNCHECKED EXCEPTION  ---->> RunTime exceptions
+
+1. TimeOutException  -- WebDriverWait Exception 
+2. SessionsNotCreatedException ---> It occurs when driver version is incompatible with browsers versions
+3. NoSuchSession ----> when we try to run command after driver.quit() or driver.close()
+4. InValidElementStateException is the parent class of the following classes---
+      ElementNotInteractbleException --> It happens when element is present in the DOM but is not in the state of interraction
+      ElementNotSelectableException --> same as above
+      ElementNotVisibleException -->  same as above
+5. staleElementException --> element is refreshed due to ajax calls

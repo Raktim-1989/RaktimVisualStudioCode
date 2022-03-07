@@ -1,0 +1,105 @@
+**************Jenkins*************
+Once jenkins job gets created following are the ways to understand the project pom.xml
+i. I have a project in my development workspace and I am manually coping that project (including pom.xml) 
+   in jenkins workspace i.e. C:/Users/User/.jenkins/workspace/projectName
+   Now, in Build section, do a mvn test. That's it !!!
+
+ii. We don't want to copy projects manually,place the prject in SCM and add that path in the jenkins job in SCM section
+    . jenkins will grab that path and will place that in its .jenkis workspace and will trigger the job.
+
+TestNG Reporting plugin in jenkins job
+Plugin name to be downloaded from jenkins <<plugin manager section ----->'TestNG Results Plugin'
+Now, from jenkins job <post build action select 'TestNG results' will see "/testng-results.xml"
+job done !!
+
+2. Parametirize jenkins build with multi-opions profile 
+
+Present scenario: For cross browser testing each time we need to change the browser name from config.properties file. If managements want to see the framework on a diff browser they need to change from code itself. 
+Recommended solution: If we pass the mvn test command as “mvn test -Dbrowser=chrome” 
+(D stands for parametrization in maven) 
+and if we pass this command through Jenkins test will run on chrome only.
+
+i.chnage the base class like -> String browsername =  System.getProperty("browser");
+if(browsername.equals("chrome"))
+{
+   driver = new ChromeDrivee();
+}
+
+In jenkins "build" section give -->>>>mvn test -Dbrowser = "$browser"
+while doing the job configuration select he option "The project is parametrizied" and select "choice parameter" 
+give browsername and value "chrome" , "firefox" 
+
+************************************
+jenkins Pipeline
+we use jenkins pipeline for the CI-CD phase
+build -> deploy -> test -> release the software
+we will use multiple jobs in each phase to create one single pipeline to achieve this CI-CD practice !!
+
+How to build a pipeline:
+Chain the required jobs in a sequence upstream/downstream the jobs
+Build
+Deploy ->> In build triggers section add the option 'build after other projects build' projectname : Build
+test   ->> In build triggers section add the option 'build after other projects build' projectname : Deploy
+release ->> In build triggers section add the option 'build after other projects build' projectname : test
+
+i. install build pipeline plugin ->             manage jenkins >manage plugins > Build Pipeline Plugin
+ii. Add ' build pipeline view' and configure the set up   ->> click the '+' button and add 'build pipeline view'  and add the initial job 'build' job 
+iii. Run & Validate
+
+Delivery Pipeline: It's a presentation of build pipeline.
+
+Scripting Pipeline:
+1.In this pipeline, all the previous mentioned jobs are like stages
+build
+deploy
+test
+release
+
+2. we will write a .jenkins file in groovy which will execute the pipeline and will execute automatically.
+ Two ways to create that
+ i. scripted pipeline: Create a pipeline in jenkins and select the option 'Pipeline Script' from Pipeline section
+node
+{
+stage('Build')
+{
+}
+stage('Test')
+{
+}
+
+stage('Release')
+{
+}
+
+}
+
+ii. Declarative approach: Create a jenkins file i.e. select 'pipeline script from SCM' from pipeline section
+
+pipeline{
+agent any
+stages
+{
+stage('Build')     //stage1
+{
+steps
+{
+bat "mvn clean"
+}
+}
+stage('Deploy')  //stage2
+{
+steps
+{
+echo "hello deploy"
+}
+}
+
+stage('Test')  //stage3
+{
+steps
+{
+bat "mvn test"
+}
+}
+
+*****************************************************************

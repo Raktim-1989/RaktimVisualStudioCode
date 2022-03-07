@@ -1,0 +1,103 @@
+### REPLICAS ###
+if we mention replicas=2 in our manifest file, it means it will default create 2 pods in a single node so that
+when one pod fails, the replica can provide the service by the time that failed pod gets up with a 
+new one (new IP address)
+ReplicationController creates replicas 
+
+### SCALING ###
+Netflix, amazon prime , hotstar these apps use this auto scaling service. whenever there is a load in the server,
+the load balancer auto scales up the services into several conatiners /pods
+
+### EXAMPLE OF REPLICATION CONTROLLER ###
+
+kind: ReplicationController               
+apiVersion: v1
+metadata:
+  name: myreplica
+spec:
+  replicas: 2            
+  selector:        
+    myname: Bhupinder Rajput                             
+  template:                
+    metadata:
+      name: testpod6
+      labels:            
+        myname: Bhupinder
+    spec:
+     containers:
+       - name: c00
+         image: ubuntu
+         command: ["/bin/bash", "-c", "while true; do echo Hello-Bhupinder; sleep 5 ; done"]
+
+### COMMANDS ###
+kubectl scale --replicas=5 rc -l myname=Raktim
+kubectl get rc 
+kubectl get pods --show-labels
+kubectl get pods -o wide
+kubectl delete pod podname // if we delete any pod , it will automatically bring up another pod from back end to match 
+                           //desired == actual (since replicas is set ==2)
+kubectl delete -f replicationcontroller.yaml   //deleting the rc file 
+
+### REPLICASET ###
+ReplicaSet is an advanced version of ReplicationController(rc).
+It works on equality based selector + set based selector , where as Replication Controller works on equality based selector\
+
+*** EXAMPLE OF REPLICA SET ****
+kind: ReplicaSet                                    
+apiVersion: apps/v1                            
+metadata:
+  name: myrs
+spec:
+  replicas: 2  
+  selector:                  
+    matchExpressions:                             # these must match the labels
+      - {key: myname, operator: In, values: [Bhupinder, Bupinder, Bhopendra]}
+      - {key: env, operator: NotIn, values: [production]}
+  template:      
+    metadata:
+      name: testpod7
+      labels:              
+        myname: Bhupinder
+    spec:
+     containers:
+       - name: c00
+         image: ubuntu
+         command: ["/bin/bash", "-c", "while true; do echo Technical-Guftgu; sleep 5 ; done"]
+
+### COMMANDS ###
+kubectl apply -f replicaset.yaml
+replicaset.apps/myrs created
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+myrs-b2jv9   1/1     Running   0          17s   172.17.0.6   minikube   <none>           <none>
+myrs-xzxcq   1/1     Running   0          17s   172.17.0.5   minikube   <none>           <none>
+
+D:\kubernetes\object>kubectl scale --replicas=1 rs/myrs
+replicaset.apps/myrs scaled
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE     IP           NODE       NOMINATED NODE   READINESS GATES
+myrs-b2jv9   1/1     Running   0          2m52s   172.17.0.6   minikube   <none>           <none>
+
+D:\kubernetes\object>kubectl get rs
+NAME   DESIRED   CURRENT   READY   AGE
+myrs   1         1         1       3m31s
+
+*****though-we-delete-the-pod-still-due-to-maintain-desired-state-it-will-create-another-POD
+D:\kubernetes\object>kubectl delete pod myrs-b2jv9
+pod "myrs-b2jv9" deleted
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+myrs-qjnbf   1/1     Running   0          37s   172.17.0.5   minikube   <none>           <none>
+
+*** DELETE REPLICA SET ***
+D:\kubernetes\object>kubectl delete pod myrs-b2jv9
+pod "myrs-b2jv9" deleted
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+myrs-qjnbf   1/1     Running   0          37s   172.17.0.5   minikube   <none>           <none>
+
+***END***

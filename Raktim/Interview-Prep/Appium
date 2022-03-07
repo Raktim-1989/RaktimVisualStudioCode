@@ -1,0 +1,366 @@
+NPM -> It is an command line installer to install node modules like APPIUM , PROTRACTOR , ANGULAR JS
+JAVA -> To write the code from client side
+ANDROID SDK -> To open a virtual device 
+NODE-> To start & communicate with android server 
+
+<<<<<<<<  LINKS    >>>>>>>>
+1. https://github.com/appium/java-client
+2. https://www.npmjs.com/search?q=appium    //npm repo whhere the node modules exists
+3. https://github.com/appium/appium/blob/master/sample-code/apps/ApiDemos-debug.apk  //apidemos-debug.apk file exists
+4. https://stackoverflow.com/questions/40214342/error-obtaining-ui-hierarchy-error-while-obtaining-ui-hierarchy-xml-file-com-an
+ 
+
+
+When we are communitaing with these softwares, our system has to sya whether the softwares are present. That's why
+we are setting nup the environment variables as following ---
+   C:\Program Files\nodejs\node_modules\npm\bin
+   C:\Program Files\nodejs\
+   C:\Users\USER\AppData\Local\Android\Sdk\platform-tools
+   C:\Users\USER\AppData\Local\Android\Sdk\tools
+   C:\Users\USER\AppData\Local\Android\Sdk\tools\bin
+
+
+### How to resolve the following ###
+Error obtaining UI hierarchy Error while obtaining UI hierarchy XML file
+: com.android.ddmlib.SyncException: Remote object doesn't exist
+
+Solution : The best way is to kill the adb server and start it again.
+
+ adb kill-server
+ adb start-server
+
+This will do the trick !!!
+
+**************************************
+Setup:
+i. Download JAVA
+ii. Download Android Studio and find out the Android SDK path
+iii. Download Node
+iv. Set (JAVA , Android SDK , Node) environment variable in Windows System 
+v. Opne Android Studio & create a Virtual device from 'Device Manager' section 
+vi. Configure Emulator 
+vii. Install and start the Appium server via Node
+     Appium start 
+Please note : The appium server will listen to port 4473 : http://localhost:4723/wd/hub
+viii. Install Eclipse and set up DesiredCapabilites class with the following set up 
+      File app = new File(new File("src"), "ApiDemos-debug.apk");    //We will deploy this 'ApiDemos-debug.apk' file in the emulator server
+      DesiredCapabilities cap = new DesiredCapabilities();
+		cap.setCapability(MobileCapabilityType.DEVICE_NAME, "Raktimemulator");
+		cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+        cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
+		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 900);
+        AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new URL("http://localhost:4723/wd/hub"),cap);
+ix.  Trigger the script from Eclipse
+x.   Open uiautomatorviewer.bat from the following location
+     C:\Users\USER\AppData\Local\Android\Sdk\tools\bin     //this is to locate elements 
+xi.  Click 'Device Screenshot(uiautomator dump) icon and grab the screenshot from the app     
+
+If we face issue 
+Error obtaining UI hierarchy Error while obtaining UI hierarchy XML file
+: com.android.ddmlib.SyncException: Remote object doesn't exist
+
+solution: Open one command prompt from admin mode and enter following
+         adb kill-server
+         adb start-server
+Afterwards open the uiautomatorviewer and then click the 'screenshot' icon 
+
+
+********************************
+ERROR HANDLING :Could not proxy command to remote server. Original error: Error: read ECONNRESET
+
+ Solution: I found the answer to this problem. The solution is to remove io.appium.uiautomator2.server and io.appium.uiautomator2.server.test from the device.
+
+Make sure appium server is not executing.
+Connect your android device with USB, also verify that device is connected properly by using command:
+adb devices
+Execute below commands:
+i. stop appium server by CNTRL + C 
+ii. adb uninstall io.appium.uiautomator2.server
+iii. adb uninstall io.appium.uiautomator2.server.test
+iv. Start appium server    //appium 
+v. Start executing appium test cases
+		     
+*****************
+driver.findElementByAndroidUIAutomator("attributeName(attributeValue)");
+driver.findElementsByAndroidUIAutomator("new UiSelector().propertyName(propertyValue)");
+                                        ("new UiSelector().clickable(true)")
+//Scenario: We have multiple elemnets where we are trying to verify whether the element is clickable or not
+            all the properties (following) are defined in the class UiSelector, that's why we have to mention like above          
+property -> clickable
+value -> false
+few properties example:
+    i. clickable
+    ii. checkable
+    iii. enabled
+    iv. focusable
+    v. scrollable
+    vi. selected 
+few attribute example:
+    i. text
+    ii. index
+    iii. resource-id //id
+tag Name        
+    i. class    //If '$'  is there in clasName the tag name won't accept
+
+
+**************************
+TOUCH ACTIONS IN APPIUM -- MOBILE GESTURES
+
+Case1: If the clickable property is set to false, we need to use the tap concept for that element 
+       //Tap functionality : It is applicable in mobile , while holding an element for a few , something happens .
+                         In web which is click, in mobile that is tap
+       To achieve the functionality, appium guys desigend a class -- TouchActions
+       TouchAction t = new TouchAction(driver);
+       t.tap(PointOption tapOptions);    //when we want to use co-ordinates based on element
+       t.tap(TapOptions tapOptions);     //wehn we want to use xpath of an element
+
+Approach: 
+   import io.appium.java_client.TouchAction;
+   import static io.appium.java_client.touch.TapOptions.tapOptions;
+   import static io.appium.java_client.touch.offset.ElementOption.element;
+
+   TouchAction t = new TouchAction(driver);
+   WebElement expandList = driver.findElement(By.xpath("//android.widget.TextView[@text= 'Expandable Lists']"));
+   t.tap(tapOptions().withElement(element(expandList))).perform();
+       
+
+Case2: Long Pressing an element to open a pop-up
+                   Or    
+       CLICK & HOLD webElement and grab the text from the POP-up
+       This is a concept of Touch Action Sequence execution
+       LongPress the element < With a duration of few seconds < release the element < perform 
+       
+       import io.appium.java_client.TouchAction;
+       import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
+       import static java.time.Duration.ofSeconds;
+
+       TouchAction t = new TouchAction(driver);
+       WebElement peopleNames = driver.findElement(By.xpath("//android.widget.TextView[@text= 'People Names']"));
+       t.longPress(longPressOptions().withElement(peopleNames).withDuration(ofSeconds(2))).release().perform();
+Case3: How to automating Swipping event 
+       Lonpress the element < witha duration of few seconds < move to another element < release < perform
+       import static io.appium.java_client.TouchAction;
+       import static io.appium.java_client.touch.LongPressOptions.longPressOptions;
+       
+       TouchAction t = new TouchAction(driver);
+	   WebElement src = driver.findElement(By.xpath("//*[@content-desc = '15']"));
+	   WebElement dest = driver.findElement(By.xpath("//*[@content-desc = '45']"));
+	   t.longPress(longPressOptions().withElement(element(src)).withDuration(ofSeconds(2))).moveTo(element(dest)).release().perform();
+        		
+Case4: How to automate Scrolling 
+       We need to use Android API for scrolling purpose. we need to bring back Android API into our Appium API
+
+       driver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector()).scrollIntoView(text(\"Radio Group\"))");
+
+        code logic : new UiSelector() method is wrapped up into UiScrollable class and it is scrolling down untill the view is 'Radio Group'
+Case5: How to automate Drag & Drop
+       LongPress the src element < move to dest element < release < perform
+
+        TouchAction t = new TouchAction(driver);
+		WebElement src = driver.findElements(By.className("android.view.View")).get(0);
+		WebElement dest = driver.findElements(By.className("android.view.View")).get(1);
+		t.longPress(longPressOptions().withElement(element(src))).moveTo(element(dest)).release().perform();
+		
+********************************
+CONFIGURING REAL DEVICES FOR RUNNING APPIUM TESTS
+
+1. Go back to Settings home screen, scroll down to the System & Device section, choose Additional settings >> Developer options
+you can then enable the developer option, USB debugging and other advanced options on Xiaomi or Redmi phones that are running on MIUI 8, MIUI 9 or later.
+2. Configure the Base class as following --
+    public static AndroidDriver<AndroidElement> capabilities(String deviceType) throws MalformedURLException
+	{
+		
+		File app = new File(new File("src"), "ApiDemos-debug.apk");
+		DesiredCapabilities cap = new DesiredCapabilities();
+        if(deviceType.equals("emulator"))
+        {
+             cap.setCapability(MobileCapabilityType.DEVICE_NAME, "Raktimemulator");
+        }
+        else if (deviceType.equals("real"))
+        {
+            cap.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Device");
+        }
+		cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+		cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
+		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 3000);
+		System.out.println("raktim");
+		AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new URL("http://localhost:4723/wd/hub"),cap);
+		
+		return driver;
+
+	}
+
+    //call the above method based on the requirement 
+
+***********************************
+CODE FOR MOBILE BROWSER CAPABILITIES
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.remote.MobileCapabilityType;
+
+public class baseChrome {
+public static  AndroidDriver<AndroidElement> capabilities() throws MalformedURLException
+{
+AndroidDriver<AndroidElement>  driver;
+
+// TODO Auto-generated method stub
+/* File appDir = new File("src");
+     File app = new File(appDir, "ApiDemos-debug.apk");*/
+     DesiredCapabilities capabilities = new DesiredCapabilities();
+    
+     capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Device");
+     
+     capabilities.setCapability(MobileCapabilityType.BROWSER_NAME,"Chrome");
+    
+  //   capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+    driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+   
+   return driver;
+}
+
+}
+//Testcase
+import java.net.MalformedURLException;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+
+public class browse extends baseChrome {
+
+public static void main(String[] args) throws MalformedURLException {
+// TODO Auto-generated method stub
+AndroidDriver<AndroidElement> driver=capabilities();
+driver.get("http://facebook.com");
+driver.findElementByXPath("//*[@id='u_0_1']/div[1]/div/input").sendKeys("qwerty");
+driver.findElementByName("pass").sendKeys("12345");
+driver.findElementByXPath("//button[@value='Log In']").click();
+//rahulonlinetutor@gmail.com
+
+}
+
+}
+**************************
+DESIRED CAPABILITIES FOR REAL DEVICE EXECUTION
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.remote.MobileCapabilityType;
+
+public class Recycle3 {
+public static  AndroidDriver<AndroidElement> capabilities(String device) throws MalformedURLException
+{
+AndroidDriver<AndroidElement>  driver;
+
+// TODO Auto-generated method stub
+File appDir = new File("src");
+     File app = new File(appDir, "ApiDemos-debug.apk");
+     DesiredCapabilities capabilities = new DesiredCapabilities();
+     
+     //capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Rahulemulator");
+     if(device.equals("real"))
+     capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Device");
+     else
+         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Rahulemulator");
+   //  capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "chrome");
+    capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+    driver = new AndroidDriver<>(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+   
+   return driver;
+}
+
+}
+
+****************************
+CODE DOWNLOAD
+
+import java.net.MalformedURLException;
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+
+public class browse extends baseChrome {
+
+public static void main(String[] args) throws MalformedURLException {
+// TODO Auto-generated method stub
+AndroidDriver<AndroidElement> driver=capabilities();
+/* driver.get("http://facebook.com");
+driver.findElementByXPath("//*[@id='u_0_1']/div[1]/div/input").sendKeys("qwerty");
+driver.findElementByName("pass").sendKeys("12345");
+driver.findElementByXPath("//button[@value='Log In']").click();*/
+//rahulonlinetutor@gmail.com
+
+driver.get("http://cricbuzz.com");
+driver.findElementByXPath("//a[@href='#menu']").click();
+driver.findElementByCssSelector("a[title='Cricbuzz Home']").click();
+System.out.println(driver.getCurrentUrl());
+JavascriptExecutor jse = (JavascriptExecutor) driver;
+   jse.executeScript("window.scrollBy(0,480)", "");
+   Assert.assertTrue(driver.findElement(By.xpath("//h4[text()='Top Stories']")).getAttribute("class").contains("header"));
+   
+
+
+//adb devices- Unauthorized
+//adb kill-server
+//adb start-server
+//adb devices
+
+
+}
+
+}
+***********************************
+Installing .atk file inside an emulator
+
+adb install D:\Appium\General-Store.apk
+Performing Streamed Install
+
+**************************************
+HOW TO SWITCH FROM NATIVAE TO WEB VIEW IN APPIUM 
+
+Set<String> contextNames =  driver.getContextHandles();
+for(String contextName : contextNames)
+{
+      System.out.println(contextName);         //print out something like NATIVE_APP \n WEBVIEW_1
+}
+driver.context(contextNames.toArray()[1]);      //set context to WEBVIEW_1
+//do some web testing
+driver.findElementByCssSelector(".green_button").click();
+
+driver.context("NATIVE_APP");
+//do some native testing if we want
+driver.quit(); 
+
+******************************************
+ANDROID CHROME BROWSER AUTOMATION WITH APPIUM
+
+i. Build Desired Capabilities for mobile browsers
+ii. Understand how to inspect and grab Mobile browser locators
+iii. Build and Run Automation tests on mobile chrome browser
+iv. Understand how to scroll in browsers
+
+
+*****************
+BROWSER STACK LINKS :
+https://app-automate.browserstack.com/dashboard/v2/get-started#upload-app
+https://app-automate.browserstack.com/dashboard/v2/builds/c9ce7e070acc87f04f154a9203c29c65359e57bf/sessions/c35b399fc01ed1b66c5f1898007765c47cbbde60
+https://app-automate.browserstack.com/dashboard/v2/getting-started
+https://app-automate.browserstack.com/dashboard/v2/getting-started
+
+
+
+
+
+       
+       

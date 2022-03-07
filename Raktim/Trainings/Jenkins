@@ -1,0 +1,103 @@
+### CI/CD Pipeline with Jenkins Corporate trainer ###
+##Contact No --> Sumathi (8095819639)
+
+DEVOPS COURSE CONTENTS
+1. INTRODUCTION TO DEVOPS
+2. LINUX: BASICS, ADMIN & NETWORKING
+o CICD (continuous integration & continuous delivery) -- JENKINS
+TABLE OF CONTENTS
+INTRODUCTION TO DEVOPS
+1. What is DevOps?
+a. History of DevOps
+b. Different Teams Involved
+c. DevOps definitions
+2. DevOps and Software Development Life Cycle
+a. Waterfall Model
+b. Agile Model
+3. DevOps main objectives
+4. Prerequisites for DevOps
+5. Continuous Testing and Integration
+6. Continuous Release and Deployment
+7. Continuous Application Monitoring
+8. Configuration Management
+9. What is Cloud?
+a. History and evolution of cloud
+b. Cloud Computing Concepts
+c. Public, Private, Hybrid Clouds
+d. IAAS,SAAS, PAAS Cloud Models
+10. Public Clouds
+a) Amazon Web Services, Azure, Oracle Cloud, IBM Cloud
+LINUX: BASICS & ADMIN
+ Linux Overview
+ Linux File System Hierarchy
+ VirtualBox Overview
+ Install VirtualBox on Windows
+ Create your First Virtual Machine
+ Install Linux on Virtual Machine / Importance of Linux in DevOps
+ Fetching OS and Hardware information
+ Linux Basic Command Utilities
+o List Files and Directories (ls)
+o Move Between Directories (cd)
+o I totally lost so where am I? (PWD)
+o Create Directories (mkdir)
+o Create Files (touch)
+o Delete Files and Directories (rmdir and rm)
+o Copy Files and Directories (cp)
+o Move Files and Directories (mv)
+o Rename Files and Directories using the mv command
+o Pipes and Redirection
+ Archiving and Compression using (tar)
+ Linux File Editors (VIM)
+ Utilities to download software into Linux from Internet
+ User Administration
+ File permission management
+ Package Management
+ Service Management
+LINUX: NETWORKING
+ Introduction to network.
+ Firewall
+ Load Balancer
+ Port
+ Protocol
+ IP Address
+ DNS
+VERSION CONTROL
+ Version Control System
+ Centralized & Distributed Version Control System
+ Maven G A V explained
+CICD Using JENKINS
+Getting started with Jenkins
+ Course Overview
+
+ How to Take this Course and How to Get Support
+ About Continuous Integration
+ Introduction to Jenkins and the History of Jenkins
+ Install Java
+ Install Jenkins
+ Jenkins Architecture and Terms of Jenkins
+ Overview of Jenkins UI : Dashboard and Menus
+ Create Our First Jenkins Job
+ Run our First Jenkins Job
+Continuous Integration (CI) with Jenkins
+ Install Git and Jenkins GitHub Plugin
+ Install Maven on Our Local Box
+ Configure Jenkins to Work with Java, Git and Maven
+ Text Direction: Create our First Maven-based Jenkins Project
+ Create our First Maven-based Jenkins Project
+ Trouble Shooting: Create our First Maven-based Jenkins Project
+ Run our First Jenkins Build and Jenkins Workspace
+ Trouble Shooting: Run our First Jenkins Build and Jenkins Workspace
+ Source Control Polling in Jenkins
+Continuous Delivery with Jenkins
+ Archive Build Artefacts
+ Install and Configure Tomcat as the Staging Environment
+ Deploy to Staging Environment
+ The latest Deploy to Container plug-in
+ Trouble Shooting: Deploy to Staging
+ Jenkins Build Pipeline
+ Parallel Jenkins Build
+ Deploy to Production
+Note: Training will be recorded during the session this only for Readable purpose, the trainer needs to support with TOC, Lab Guidance, Material
+Thanks &Regards
+Sumathi
+8095819639

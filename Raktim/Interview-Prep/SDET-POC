@@ -1,0 +1,241 @@
+// reference : https://marketplace.visualstudio.com/items?itemName=ritwickdey.create-file-folder
+
+//how to use files/folders in visualstudio code
+How to use?
+Keyboard Shortcut: ctrl+alt+N to create new files & ctrl+alt+shift+N to create new folders. (you can override these shortcuts).
+
+Press ctrl+shift+p to open command panel and type Create File or Create Folder.
+
+Right click on Explorer Window and click Create File or Create Folder.
+
+*********************************************
+
+SDET POCs
+
+1. Docker integration with selenium grid.Executing the selenium automation test cases
+In multiple docker containers by the following -
+i.create a docker-compose.yaml file and passing the knowledge of selenium hub & nodes 
+Inside the .yaml file. 
+ii. Once running the docker-compose , the entire selenium grid will be up & running 
+Inside the containers. 
+iii. Now route the automation test cases inside those containers as a distributon test.
+iv. Configure it in TestNG and run the parallel tests.
+v. Integrate docker in a ci/cd tool like  Jenkins. 
+
+Flow:
+Write a .bat file and mention docker-compose -f docker-compose.yaml inside the file
+-->trigger the .bat file by writing a java code with Runtime class-->scan the output file 
+Where the server log will be displayed check whether the grid is up & running
+--> once the grid is up , trigger the automation test cases inside the containers. 
+-->integrate docker tests with maven & Jenkins !!
+
+*********************************************
+
+Framework
+   i. Create API project in SOAP UI tool from functional document using method   End Point URL    Resource  Parameter
+   ii. Develop a Test Suite <Test Case <<test steps (REST) from the services of third API project
+   iii. Add some assertions to make the test case robust like-property content assertion , Script Assertion
+        example: In the addTestcase-> from the JSON response grab the ID (property) value and paste it into the TestSuite level as 'propert transfer'
+        Now, this ID porperty value is accessible by all the other test cases since it is available in Test Suite level
+        Then, in the next test case in the 'requestJSON' add ${#TestSuite#ID}
+   iv.   Create a java project and import all the SOAP UI jars from lib/bin  soapui5.3.0 ->> bin dir
+    vi. Create WsdlProject project = new WsdlProject("SOAPUI project path");
+               WsdlTestSuite testsuite = project.getTestSuiteByName("TestSuiteName");
+                           //execute the test case code here
+   vii. Execute the test
+   viii. Integrate TestNG and trigger testes from testNG.xml
+   ix.For execution purpose ->> create one folder called lib inside your project path and add all the jars obver that folder
+      javac -classpath lib/* -d ./bin ./src/Rest/*.java
+      java -cp bin;lib/* org.testng.TestNG testng.xml
+   x. Run the jenkins server : java -jar jenkins.war -hhtpPort = 9090
+      job set up schedule : minutes(0-59)   hour(0-23)  day-month(1-31)  month(1-12) day(1-7)
+               
+
+*************************************************************************************
+
+### Framework: Localisation framework ### 
+Flow->
+
+test ->  DriverFactory & languageConfig instantiated  -->>>> page ->elementUtil 
+
+src/main/java : following folders 
+ i. configreader  :
+ class  ConfugPropReader
+  {
+         public Properties initLangProp()
+         {
+               based on the langugage selection from jenkins , the corresponding 
+               properties file will be loaded 
+               
+               return prop;
+         }
+ }
+
+ ii. factory    :
+ class DriverFactory
+ {
+       
+       public WebDriver initDriver(String browserName, Properties prop)
+       {
+            //write switch case command for driver instantiation
+            //url launch 
+            //maximizing window
+            //delete all cookies
+             switch(browserName.toLowerCase())
+             {
+             case "chrome" :
+             WebDriverManager.chromeDriver().setup();
+             driver = new ChromeDriver();
+             break;
+             case "firefox" :
+             WebDriverManager.firefoxDriver().setup();
+             driver = new firefoxDriver();
+             break;
+             }
+
+             driver.get(prop.getProperty("url"));
+             driver.manage().window().maximize();
+             driver.manage().deleteAllCookies();
+
+             return driver;
+
+       }
+ }
+
+ iii. pages
+
+  class HomePage
+  {
+     private WebDriver driver;
+     private ElementUtils elementUtil;
+       public HomePage(WebDriver driver)
+       {
+           this.driver = driver;
+           elementUtil = new ElementUtils();
+
+       }
+
+       private WebElement getHeaderElement(String headerValue)
+       {
+           String headerXpath = "//*[contains(text(), '"+headerValue+"')];
+           return elementUtil.getElement("xpath", headerXpath);
+       }
+
+       public boolean isHeaderExist(String headerValue)
+       {
+           String header =  getHeaderElement(headerValue).getText();
+           return getHeaderElement(headerValue).isDisplayed();
+
+       }
+
+
+  }
+  
+iv.   utils
+
+  class ElementUtils
+ {
+      ElementUtils(WebDriver driver)
+      {
+            this.driver = driver;
+      }
+
+    //get Xpath method
+    public By getBy(String locatorType , String locatorValue)
+    {
+         By locator = null;
+         switch(locatorType.toLowerCase())
+         {
+                case "id":
+                locator = By.id(locatorValue);
+                break;
+               
+                case "xpath":
+                locator = By.xpath(locatorValue);
+                break;
+
+                case "name":
+                locator = By.name(locatorValue);
+                break;
+
+                default:
+                break;
+
+         }
+
+//write the folloiwng 2 overloaded methods to find element
+
+      public WebElement getElement(By locator)
+           {
+                return driver.findElement(locator);
+           }
+
+      public WebElement getElement(By locatorType , By locatorValue)
+      {
+                return driver.findElement(getBy(locatorType, locatorValue));
+      }
+
+
+         return locator;
+
+    }
+
+
+ }
+
+src/test/java : tests
+
+@BeforeTest
+public void setUp()
+{
+    cp = new configreader();
+    prop = cp.initLangProp();
+    df = new DriverFactory();
+    driver = df.initDriver();
+    homepage = new HomePage(driver);
+
+}
+
+@Test
+public void headerTest()
+{
+     Assert.assertTrue(homepage.isHeaderExist(prop.getProperty("header")));
+}
+
+@AfterTest
+public void tearDown()
+{
+   driver.quit();
+}
+
+//sample properties file  under src/main/resources
+
+lang.english.properties
+lang = french
+url = https://www.un.org/en/ 
+header = Peace, dignity and equality
+
+lang.french.properties
+lang = french
+url = https://www.un.org/fr/ 
+header = Paix, dignité et égalité
+
+************************************************************************
+
+RestAPI + Cucumber BDD Framework development from scratch 
+Components:
+i. Rest API Basics & RestAssured 
+ii. Serialization & DeSerialization using POJO classes
+iii. Resquest & Response Spec Builders
+iv. Cucumber Framework
+v. Maven 
+
+*******************************************************
+Usimg RPA Automation concept I implemened the following Bots 
+
+i. Extract invoices and amount details from hundred of PDFs generated everyday and place them in company 
+ internal tools automatically.
+ Also, maintained a copy of extracted details in Excel for further data analysis and research
+
+ ii. OCR / Captcha automation 
+ iii. data scrapping & data analytics 

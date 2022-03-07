@@ -1,0 +1,26 @@
+### SECURITY TESTING ###
+
+     Security is necessary for everything. If there is any security leakege, it allows hackers to hack webapplication / webservice.
+
+1. SQL Injection    
+    We can check whether SQL Injection having any leakage or not, SOAP UI tool does for us. 
+
+2. XPATH Injection
+    Hackers can hack data from the XML Path consruction //div[@class = pass] 
+    We need to test whether there is any leakage in xpath construction
+  
+3. Fuzzing Scan
+    Puting random data as input as part of this Fuzzing Scan testing
+4. Invalid Types
+    Malformed XML : By sending malformed xml to targett server, our server may get crashed. 
+    We need to test whether our server is responding with these malformed xml or not.   
+5. Boundary Scan
+6. XML BOMB 
+7. Cross Site scripting : It is called XSS scripting, probably the most common website security 
+                          vulnerability. It enables an attacker to inject client side script (javascript)
+                          into webpages viewed by other user !!
+                          It is almost same as XPATH INJECTION & SQL INJECTION but here the target
+                          is user of a website instead of website . 
+
+                                                       
+     

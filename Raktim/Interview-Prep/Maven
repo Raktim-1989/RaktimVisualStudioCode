@@ -1,0 +1,235 @@
+maven interview questions
+
+1. Surefire plugin: is used to test the test cases from pom.xml
+<build>
+<pluginmanagement>
+<plugins>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-surefire-plugin</artifactId>
+<version>2.20.1</version>
+</plugin>
+</plugins>
+</pluginmanagement>
+</build>
+
+
+2. TestNG integration with Maven pom.xml
+
+<plugins>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-surefire-plugin</artifactId>
+<version>2.20.1</version>
+<configuration>
+<suiteXmlFiles>
+<suiteXmlFile>testng.xml</suiteXmlFile>
+</suiteXmlFiles>
+</configuration>
+</plugin>
+</plugins>
+
+3. Switching the tests with maven profiling
+
+<profiles>
+**********profile for regression***********
+<profile>
+<id>Regression</id>
+<build>
+<pluginmanagement>
+<plugins>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-surefire-plugin</artifactId>
+<version>2.20.1</version>
+<configuration>
+<suiteXmlFiles>
+<suiteXmlFile>testng2.xml</suiteXmlFile>
+</suiteXmlFiles>
+</configuration>
+</plugin>
+</plugins>
+</pluginmanagement>
+</build>
+</profile>
+*************profile for smoke**********
+<profile>
+<id>Smoke</id>
+<build>
+<pluginmanagement>
+<plugins>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-surefire-plugin</artifactId>
+<version>2.20.1</version>
+<configuration>
+<suiteXmlFiles>
+<suiteXmlFile>testng2.xml</suiteXmlFile>
+</suiteXmlFiles>
+</configuration>
+</plugin>
+</plugins>
+</pluginmanagement>
+</build>
+</profile>
+</profiles>
+
+command: mvn test -PRegression
+
+cycle:
+verify -> compile -> test -> package -> validate -> install -> deploy
+
+*******************************************************************************
+##HOW TO USE DEPENDENCY OF ONE PROJECT INTO ANOTHER
+<dependencies>
+  <dependency>
+      <groupId>ProjectGroup1</groupId>
+      <artifactId>Project1</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+  </dependency>
+  <dependency>
+      <groupId>ProjectGroup1</groupId>
+      <artifactId>Project1</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+      <classifier>test</classifier>
+  </dependency>
+
+</dependencies>
+
+********************************************************************************
+##How to run multiple tests parallel
+Case1: parallel in @Test level in same class i.e. m1() & m2() will run in parallel
+class1
+{
+   @Test
+   public void m1(){}
+   @Test
+   public void m2(){}
+
+}
+
+1. Add property & surefire plugin
+
+<build>
+  <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0.-M5</version>
+        <configuration>
+          <parallel>methods</parallel>
+          <threadCount>10</threadCount>
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
+          <suiteXmlFiles>
+             <suiteXmlFile>testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+     </plugin>
+  </plugins>
+ </build> 
+
+Case2: Run the classes in following way
+class1{
+    @Test
+    public void m1()
+    {
+
+    }
+    @Test
+    public void m2()
+    {
+
+    }
+
+}
+
+class2
+{
+    @Test
+    public void m3()
+    {
+
+    }
+    @Test
+    public void m4()
+    {
+
+    }
+}
+//pom.xml will be configured in such a way that m1() & m3() will run in parallel first , afterwards m2() 
+& m4() will run in parallel
+
+<build>
+  <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0.-M5</version>
+        <configuration>
+          <parallel>methods</parallel>
+          <threadCount>10</threadCount>
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
+          <suiteXmlFiles>
+             <suiteXmlFile>testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+     </plugin>
+  </plugins>
+ </build> 
+
+ Output : m1()
+          m3()
+          m2()
+          m4()
+
+********************************************************
+##How to pass parameters at run time via maven 
+
+Flow will be like the folliwing -->
+mvn command --> pom.xml --> propertiesFile --> javaclass(LoginTest.java)
+
+1. In pom.xml configure as following--
+<properties>
+<username>usernameValue</username>
+<password>passwordValue</password>
+</properties>
+<build>
+  <testResources>
+    <testResource>
+      <directory>src/test/resources</directory>
+      <filtering>true</filtering>
+    </testResource>
+  </testResources>
+</build>          
+
+2. In properties file wrtie following (create .properties in src/test/resources) 
+(config.properties)
+uName=${username}
+Pwd=${password}
+
+3. Read the properties file and fetch data and use in testCases
+loginTest.java 
+ Properties prop = new Properties();
+ prop.load(loginTest.class.getclassLoader().getResourceAsStream("MyProject.properties"));    //another technique to load the .properties file and load the class as well
+//LoginTest.java is the file  where we have written the configuration of the property file
+ String uName = prop.getProperty("uName");
+ String pass = prop.getProperty("Pwd");
+
+WebElement userName = driver.findElement(By.xpath(""));
+WebElement password = driver.findElement(By.xpath(""));
+username.sendKeys(uName);
+password.sendKeys(pass);
+
+4. command : mvn -DUsername=wrishi05 -Dpassword=creative clean install 
+************************************************8
+#We can have multiple pom.xml in our Project
+
+By default , maven will search for pom.xml , if this not there it will throw exception 
+But we can have pom1.xml & pom2.xml 
+command : mvn -f pom1.xml clean install
+
+
+

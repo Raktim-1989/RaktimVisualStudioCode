@@ -1,0 +1,226 @@
+Special Interview Questions - SDET
+
+ Selenium based:
+1. What are the challenges using selenium?
+ No support for non-web based application
+ Time or sync issues
+ Test Execution slowness in IE
+ 
+2. What are selenium4 new features?
+  Support of relative locators -> element.getSize().getHeight()
+                                  element.getLocation().getX() 
+                                  element.getLocation().getY()
+  Element screenshot is now possible/section screenshot is possible
+  WebDriver is now completely developed by W3C Standardisation
+  Selenium IDE for chrome is now available
+
+3. Difference between driver.findElement() & element.findElement() ? 
+   The first one will search the element from the page , and the second one will search that element from the filtered element(i.e. form) only
+4. Difference between PageFactory & Page Object Model(POM)?
+   POM is a design pattern, we can see it as a repo to store all the web elements as objects. Easy to maanage, reusability of code, removes duplicates.
+   Page Factory is a class which is used to initialise the webElement in a page class
+5. Stale Element exception: When a particular section of a page, gets refreshed due to ajax calls, the element will be staled.
+
+6. Document Object Model :                                    Document 
+                           Head                                                                   Body
+                       getTitle()                                              getAttribute("href")       getLinks() -> "a"       getHeadername
+7. XPath can move forward & backward but CSS only forward
+8. How to access CSS using nth element: <type>:nth-child(n)
+9. Exceptions:
+   NoSuchElementException
+   NoSuchFrameException
+   NoAlertPresentException
+   ElementNotVisibleException
+   StaleElementReferenceException
+10. Framework: Is a charter of rules and systematic resolutions of a problem
+               Keyword Driven, Data Driven , Hybrid, BDD
+11. Headless: ChromeOptions options = new ChromeOptions();
+              options.addArguments("--headless");
+              driver = new ChromeDriver(options);
+12. Window Based Alert/popup (not java based ) : Using Robot class or AutoIT
+13. StringBuffer & StringBuilder differences: StringBuilder is threadsafe and synchronized. That means multiple threads can't call 
+                                               the methods of StringBuffer class simulteneously. StringBuilder is opposite. Stringbuffer is recomended for parallel testing.
+14. Hard & soft Assertions:
+    Hard assertions(Assert): It will throw exception with failing the test case and won't continue to the next step. It will move to the next @Test
+    Soft Assertion(Verify): It will not throw an exception when test fails, else it will continue to the next step and finally will show the exception. 
+    import org.testng.asserts.SoftAssert
+     SoftAssert softassert = new SoftAssert();
+     //assertcode finds exception but won't throw and will reach the next code
+    //softassert.assertAll();     
+15. HashMap & HashTable diff : HashMap allows one null key & multiple null values. Not threads safe
+                               HashTable doesn't allow any null value. Thread-safe.
+                           
+******************************************
+Framework Interview Questions
+
+1. TestNG framework components
+   TestNG.xml
+   PageObject Model - POM
+   Proper Test annotations
+   One BaseDriver class
+   pom.xml -> maven project for build
+   Data driver approach
+   Reporting, log4j
+   Custom utilities/helper files -> listener
+   . jenkins file for CI pipeline
+   
+  Cucumber framework is pretty same excep -. feature file, step definition file & runner file
+
+2. How do you handle data parameterisation globally in frameworks?
+
+(i).TestNG
+   <suite>
+     <parameter name = "Url" value = "http://google.com"/>
+    <test>
+      <classes>
+         <class name = "package.classname"/>
+      </classes>
+    </test>
+   </suite>  
+   
+  Now integrate that .xml with class file
+  @Parameters({"Url"})
+  @Test
+    public void getUrl(String url)
+  {
+    driver.get(url);
+   } 
+
+(ii). cucumber
+     Featurefile
+    Given
+    When
+    Then user is able to browse "http://google.com"
+   
+    Step-definition file
+  @Then()
+   public void user_is_able_to_browse(String url)
+    {
+driver.get(url);
+    }
+
+3. Data parametrisation specific to test
+
+i.  TestNG : Use @DataProvider
+ii. Cucumber: scenario outline
+       Scenario Outline: Login Test
+       Given
+       When
+       Then User enters "<username>" and "<password>"
+  
+Examples:
+ |username	|password	|
+ |123	|erft	|
+ |234	|sdfff	|
+
+
+4. How to run selected tests from a specified test cases in frameworks?
+i. TestNG
+<suite>
+ <test>
+  <groups>
+    <run>
+      <include name = "Sanity"/>
+    </run>
+ </groups>
+  <classes>
+     <class name = "package.class"/>
+  </classes>
+ </test>
+</suite>
+
+in java file
+@Test(groups={"Sanity"})
+
+ii. Cucumber
+ Featurefile
+   @Regression
+    Scenario: A
+    Given
+    When
+
+   @Sanity
+     Scenario: B
+     Given
+     When
+ TestRunner file
+  @RunWith(Cucumber.class) 
+  @CucumberOptions(
+              features = "src/test/java/features",
+              glue = "stepdefinition",
+              tags = {"@Sanity"}  //This is where we are asking cucumber to run only Sanity 
+
+                  ) 
+
+5. How to skip selected Tests ?
+i. TestNG
+@Test(enabled = false)
+         OR
+ TestNG.xml
+<suite>
+   <test>
+     <groups>
+        <run>
+          <include name = "Sanity"/>
+          <exclude name = "Regression"/>
+        </run>
+     </groups>
+      <classes>
+         <class name = "package.class"/>
+      </classes>
+   </test>
+</suite> 
+
+ii. cucumber
+   tags = {"@Regression" , "~@Sanity"}
+
+6. How to prepare dependency execution for tests ?
+i. TestNG
+@Test(dependsOnMethods={"Regression"})
+public void smoke()
+{
+}
+@Test
+public void Regression()
+{
+}
+
+ii. Cucumber
+@Regression
+Scenario:
+Given
+When
+
+@smoke
+Scenario:
+Given
+When
+
+Create the hook file
+@Before
+public void executeFirst("@Regression")   //This will only be applicable for the scenario with @Regression
+{
+}
+
+7. How to use invocation count in TestNG //helper attributes
+@Test(invocationCount = 5)
+public void getRun()
+{
+//this test will execute 5 times
+}
+
+8. How to integrate TestNG with cucumber and run with TestNG configurations-
+   In Runner file do the following
+    public class TestRunner extends AbstractTestNGCucumberTests
+{
+}
+
+9. How to execute cucumbertests with specific tag from commandpromt (using maven)
+   mvn test -Dcucumber.options= "--tags @AddPlaceAPI"  
+
+10. Command to execute TestNG tests from command prompt
+    javac -classpath lib/* -d ./bin ./src/soap/*.java
+    java -cp bin;lib/* org.testng.TestNG testng.xml
+
+********************************************
+

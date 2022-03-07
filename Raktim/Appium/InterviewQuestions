@@ -1,0 +1,134 @@
+### The main challenge of Appium is to configure the device & the appium server smartly. PFB the approach 
+
+Will configure & customize the Base.java file as the following -----
+1. We will create one capabilities method which will accept 'appName' as parameter
+2. We will drive the appValue from the .properties file and the 'appname.apk' file will be stored 
+   in the 'appValue' variable.
+        Properties prop = new Properties();
+		prop.load(fis);
+		String appValue = (String) prop.get(appName);
+3. The 'deviceName' will be driven from mvn command as 'mvn test -DdeviceName=Raktimemulator' 
+4.  If the 'deviceName' equals to 'Raktimemulator' then will do the following -
+    a. startEmulator();    //This will automatically invoke appium server from a .bat file 
+    b. uninstallAppiumServerLog();    //This is to make sure before every test , the appimserver log gets unisnatlled
+5. Will configure the DesiredCpabilities obj as following with all the configurations --
+   DesiredCapabilities cap = new DesiredCapabilities();
+   cap.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+   cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());    
+   //File app = new File(new File("src"), appValue);  we will keep the .apk file in the src folder
+   cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
+   cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 3000);    
+6. Appium server is listening to the port 4723 by default . So we will provide the knowledge 
+   of the cap object to the server where appium is hosted as following -
+   AndroidDriver<AndroidElement>driver = new AndroidDriver<AndroidElement>(new URL("http://localhost:4723/wd/hub"),cap);   
+7. The capabilities() service will return the driver object and the tes cases will catch this object 
+
+
+### StartServer() method configuration
+
+public static AppiumDriverLocalService service;
+public static AndroidDriver<AndroidElement> driver;
+public AppiumDriverLocalService startServer()
+	     {
+	    	 boolean flag = checkIfServerIsRunning(4723);   //this will always set to false
+	    	 System.out.println("flag is set to " + flag);
+	    	 if(!flag)
+	    	 {
+	    		 service = AppiumDriverLocalService.buildDefaultService();
+		    	 service.start();
+		    	 System.out.println("service started");
+	    		 
+	    	 }
+	    	
+	    	 return service;
+	    	
+	     }
+
+### KillAllNodes before any Tests start so that checkIfServerIsRunning(4723) will always return false 
+
+@BeforeTest
+public void killAllNodes()
+{
+    Runtime.getRuntime().exec("taskkill /F /IM node.exe");
+    Thread.sleep(3000);
+}
+
+@Test
+public void executeTestsinLocalAppium()
+{
+    service = starServer();
+    AndroidDriver<AndroidElement> driver = capabilities("GeneralStoreApp");
+    //do some actions in the app
+    service.stop();
+}
+
+Trigger: Trigger the entire testCases from Jenkins which a parameterized build 
+***************************************
+
+### Running Apium Tests in CLOUD // Browser Stack
+
+By using the cloud approach , we can skip starting & stopping appium server , killing nodes/ports
+before starting any tests , launching emulator / physical device and so on..
+
+1. Will create 'cloudCapabilities() which will accept 'appName' as parameter
+2. will set up all the pre-requisities like opening an emulator (virtual device / physical device) ,
+   appium server will be launched in cloud. we will pass on all the configurations as a capabilities object in browserStack and the cloud will do the rest.we will just move the direction of the test cases to cloud 
+3. We will signUp in BrowserStack and browserStack wil give us an authenticate 'UserName' &    'key'. Also, we have to deploy the .apk file in browserStack cloud and after that , we will get the server where this app is hosted. 
+4. We will bring the knowledge of the desired app in the framework in such a way that we will be having an option to select multiple apps from the same Base.java file 
+   DesiredCapabilities cap = new DesiredCapabilities();
+   cap.setCapabaliy("browserstack.user" , "raktimsarkar_8cYDIq");
+   cap.setCapability("browserstack.key", "BsgHfrQpKirzfPRLaYjC");
+   if(appName.equalsIgnoreCase("GeneralStoreApp"))
+   {
+       cap.setCapability("app", "bs://cabc67dbee8f352265248778093bc84be8b3ebc1"); //this is where the GeneralStoreApp is hosted
+   }
+   else
+   {
+       cap.setCapability("app", "bs://77ff20e483734b88d56f7689eb73c7a33d40a245");  //this is where the APiDemo app is hosted
+   }
+   cap.setCapability("device", "Google Pixel 3");     //this will pull from the cloud
+   cap.setCapability("os_version", "9.0");            //this will pull from cloud
+   cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
+   cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 3000);
+5. The appium sderver hosted in cloud in the folloiwng URL 
+   AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new URL("http://hub.browserstack.com/wd/hub"),cap);
+6. We will bring one intelligence in the framework as the following so that we can have an option  to execute the testcases in cloud & local appium server
+   public AndroidDriver<AndroidElement> runCapabilities(String appName , boolean flag)
+   {
+         if(flag)
+         {
+              return cloudCapabilities(appName);
+         }
+         else
+         {
+              return capabilities(appName);
+         }
+   }
+
+### Running Tests parallel in cloud using TestNG.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="ParallelTestSuite" parallel="tests">
+	
+	<test thread-count="5" name="GeneralStoreTestCloud">
+		<classes>
+			<class name="Appium.AppiumFramework.GeneralStoreAppTest" />
+
+		</classes>
+	</test> 
+
+	<test thread-count="5" name="APiDemoTestCloud">
+		<classes>
+			<class name="Appium.AppiumFramework.APiDemoTest" />
+		</classes>
+	</test> 
+</suite> 
+
+******************************
+
+
+
+
+
+
+

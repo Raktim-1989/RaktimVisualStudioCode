@@ -1,0 +1,21 @@
+~HTMLUnit: Automated functional esting tool  //running behind the scenes, like headless 
+~Watir: visibile automation framework  |  language: Ruby 
+~RSpec: BDD framework with more human-readable syntax, while still in 100% Ruby (this is very different from Gherkin frameworks).
+~RSpec on Watir and Selenium WebDriver:
+        While I have been using Watir testing IE6 fine at that time, 
+        I would like to use Mozilla Firefox which was my preferred browser for its speed. 
+        With Selenium 2, finally, I could run automated tests in Firefox.
+~SeleniumWebDriver
+~API/WebServices testing with Ruby
+~Appium with WinAppDriver for testing win apps 
+~Protractor with JS
+~Node JS  & WebDriver IO
+~Cypress 
+
+
+##https://zhiminzhan.medium.com/definition-of-end-to-end-test-automation-success-c668d914a87e
+
+##https://zhiminzhan.medium.com/why-javascript-is-not-a-suitable-language-for-real-web-test-automation-3a87eb4b0b50
+
+##WHY AUTOMATION:
+    The purpose of test automation is not fancy demos. It is to speed up software development by detecting regression errors early and enable the team to push software updates to production daily. It makes sense to keep this in mind when comparing frameworks/languages for test automation.

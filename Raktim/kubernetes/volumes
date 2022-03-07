@@ -1,0 +1,117 @@
+#### VOLUMES ####
+1.EmptyDir : When we create a POD, we can attach VOLUME with the POD , so that multiple containers share the volume with each other
+             each container can see each other's data through the shared VOLUME .
+             When one container gets deleted, K8s automatically creates another container, and the volume is again 
+             mounted with tha container. 
+             In K8s volume is not atached with containers , else i is attached with the POD level.
+
+### LABS ###
+volume labs
+===========================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myvolemptydir
+spec:
+  containers:
+  - name: c1
+    image: centos
+    command: ["/bin/bash", "-c", "sleep 15000"]
+    volumeMounts:                                    # Mount definition inside the container
+      - name: xchange
+        mountPath: "/tmp/xchange"          
+  - name: c2
+    image: centos
+    command: ["/bin/bash", "-c", "sleep 10000"]
+    volumeMounts:
+      - name: xchange
+        mountPath: "/tmp/data"
+  volumes:                                                   
+  - name: xchange
+    emptyDir: {}
+
+#######################
+kubectl apply -f volumes1.yaml
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME            READY   STATUS    RESTARTS   AGE     IP           NODE       NOMINATED NODE   READINESS GATES
+myvolemptydir   2/2     Running   0          4m55s   172.17.0.5   minikube   <none>           <none>
+
+### go inside container1 ###
+D:\kubernetes\object>kubectl exec myvolemptydir -it -c c1 -- /bin/bash
+[root@myvolemptydir /]# cd /tmp
+[root@myvolemptydir tmp]# ls
+ks-script-4luisyla  ks-script-o23i7rc2  ks-script-x6ei4wuu  xchange
+[root@myvolemptydir tmp]# cd xchange
+[root@myvolemptydir xchange]# ls
+[root@myvolemptydir xchange]# ls -a
+.  ..
+[root@myvolemptydir xchange]# vi file1.txt
+[root@myvolemptydir xchange]# ls
+file1.txt
+[root@myvolemptydir xchange]# touch technical.txt
+[root@myvolemptydir xchange]# ls
+file1.txt  technical.txt
+[root@myvolemptydir xchange]# exit
+exit
+
+### go inside container2 and check the file created for container1 is displayed ###
+
+D:\kubernetes\object>kubectl exec myvolemptydir -it -c c2 -- /bin/bash
+[root@myvolemptydir /]# cd /tmp
+[root@myvolemptydir tmp]# ls
+data  ks-script-4luisyla  ks-script-o23i7rc2  ks-script-x6ei4wuu
+[root@myvolemptydir tmp]# cd data
+[root@myvolemptydir data]# ls
+file1.txt  technical.txt
+[root@myvolemptydir data]# cat file.txt
+cat: file.txt: No such file or directory
+[root@myvolemptydir data]# cat file1.txt
+Welcome to Raktim devops labs
+[root@myvolemptydir data]# vi file1.txt
+[root@myvolemptydir data]# exit
+exit
+
+### Now edit the file from container 2 and check in container 1 ###
+D:\kubernetes\object>kubectl exec myvolemptydir -it -c c1 -- /bin/bash
+[root@myvolemptydir /]# ls
+bin  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+[root@myvolemptydir /]# cd /tmp
+[root@myvolemptydir tmp]# ls
+ks-script-4luisyla  ks-script-o23i7rc2  ks-script-x6ei4wuu  xchange
+[root@myvolemptydir tmp]# cd xchange
+[root@myvolemptydir xchange]# ls
+file1.txt  technical.txt
+[root@myvolemptydir xchange]# cat file1.txt
+Welcome to Raktim devops labs
+
+Thanks for learning !!
+[root@myvolemptydir xchange]#
+
+
+2. HostPATH : This is applicable, when we want to mount volumes beween different PODS .
+              We can bind mount the volume path with host (node) that menas, the POD voliume will be binded
+              with node this time. 
+              This is required when we want to access the content from node.
+
+========================
+HOST PATH
+========================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myvolhostpath
+spec:
+  containers:
+  - image: centos
+    name: testc
+    command: ["/bin/bash", "-c", "sleep 15000"]
+    volumeMounts:
+    - mountPath: /tmp/hostpath
+      name: testvolume
+  volumes:
+  - name: testvolume
+    hostPath:
+      path: /tmp/data 
+
+*** END ***

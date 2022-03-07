@@ -1,0 +1,112 @@
+#### DEPLOYMMENT-BASICS ###
+
+A deployment provides declarative updates for PODs & REPLICASETS . Deployment directly talks to replica-sets & replica-sets directly talks to PODs
+Deployment acts as a supervisor --> how and when a new POD is rolled out , rolled back , updated and all .
+
+Replication Controller & replica sets cant do updates !! 
+
+UseCases:
+i. Create a deployment to rollout a REPLICASETS
+   REPLICASETS creates PODS in the background.
+   Check the status of the rollouts to see it succeeds or not .
+
+ii. Declare the new state of the PODs e.g. updating the POD template in the deployment.yaml file
+    A new replicaset will be created under the same deploy,ment & the old replicaset will be stopped
+    When we will roll back to the pervious replicaset , then only the previous replicaset will be running 
+
+iii. Scale up the deploment 
+iv. Pause the deployment to apply multiple fixes to PODtemplate spec & then resume that
+v. clean up old replicasets which dont need anymore.
+
+#### COMMANDS ###
+kubectl rollback undo   //previous version 
+deploy/mydeployments --to-revision=2
+Note: The replicasets under deployment will alwasy be created in the format --> deploymentName-RandomString
+
+kubectl get deploy  //when u inspect deployments in yr cluster
+o/p ->  folowing fields will be displyaed
+NAME - Name of the deployments
+AVAILABLE - Displays how many replicas of application are available to users
+UP-TO-DATE - Displays how many replicas have been updated to achieve the desired state  //if it shows 1 that 
+             means 1 POD has been updated (may be 1 pod had been deleted or down)from back end to maintain the desired state (say 2)
+READY - Displays how many replicas are ready or in desired state. it follows patter 2/2 (Desired /ready)
+AGE - Displays the amount of time the app has been running
+
+****************************
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+   name: mydeployments
+spec:
+   replicas: 2
+   selector:     
+    matchLabels:
+     name: deployment
+   template:
+     metadata:
+       name: testpod
+       labels:
+         name: deployment
+     spec:
+      containers:
+        - name: c00
+          image: ubuntu
+          command: ["/bin/bash", "-c", "while true; do echo Technical-Guftgu; sleep 5; done"]
+*****************************
+
+### COMMANDS ###
+kubectl get depoloy                                  //to check deployment created or not
+kubectl describe deploy mydeploy                     //to check how deployments create replicaset & pods
+kubectl get rs                                       // to check replicasets
+kubectl scale --replicas=1 deploy mydeployment       //scale up & down
+kubectl logs -f  <podname>                           //to check what is running inside containers
+kubectl rollout status deployment mydeployment       
+kubectl rollout history deployment mydeployment
+kubectl rollout undo deploy/mydeployments --to-revision=2  //rollback to previous versions
+
+### FAILED DEPLOYMENTS ###
+i. Insufficient Quotas
+ii. Readiness probe failures
+iii. Image pull errors
+iv. Insufficient permission
+v. Apps runtime misconfiguration
+
+#### DEMO-LABS ##
+D:\kubernetes\object>kubectl get deployments
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+mydeployments   1/2     2            1           12s
+
+D:\kubernetes\object>kubectl get deployments
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+mydeployments   2/2     2            2           27s
+
+D:\kubernetes\object>kubectl get rs
+NAME                       DESIRED   CURRENT   READY   AGE
+mydeployments-7b65bb58c8   2         2         2       65s
+
+## Now if we update the PODTemplate again by updateing deployment.yaml ###
+D:\kubernetes\object>kubectl apply -f deployment.yaml
+deployment.apps/mydeployments configured
+
+D:\kubernetes\object>kubectl get deployments
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+mydeployments   1/2     1            1           30m
+
+D:\kubernetes\object>kubectl get deployments
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+mydeployments   2/2     2            2           30m
+
+D:\kubernetes\object>kubectl get rs
+NAME                       DESIRED   CURRENT   READY   AGE
+mydeployments-664f66d8b4   2         2         2       5m57s
+mydeployments-7b65bb58c8   0         0         0       35m
+
+**Note-another replicaset gets created and the old rs is set to 0**
+
+
+
+
+
+
+
+    

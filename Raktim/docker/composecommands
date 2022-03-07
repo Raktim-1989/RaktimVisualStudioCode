@@ -1,0 +1,14 @@
+    FROM ###Dockercomposecommands#####
+
+    ## docker-compose -f docker-compose2.yaml up -d 
+    ## docker-compose create
+    ##  docker-compose start
+    ##  docker-compose stop
+    ##docker-compose rm
+
+    ##Above commands wont create any networks:
+    ##But if we use docker-compose up, it will create a new network !!
+
+    ##
+
+ 

@@ -1,0 +1,456 @@
+### SOAPUI ###
+1. SOAP UI was created by Ole Lensmar
+2. It is built on Java platform, uses swing for user interface
+3. it is a software application for tesing webservices
+### Basics ####
+1. Creating SOAP UI project
+2. How to add WSDL
+3. How to create Test Suite > Test Cases
+4. How to add Assertions 
+5. Run Test Step > Test case > Test Suite
+6. How to run in sequence and parallel
+7. How to create API documentation
+### REST Project in SOAP UI ###
+1. Create a REST project
+2. How to add requirement parameters
+3. Create a Test Case
+4. Add Assertions
+5. Run and validate
+### ASSERTIONS ###
+1. CONTAINS ASSERTIONS 
+2. NOT CONTAINS ASSERTIONS 
+3. VALID SOAP Response
+4. VALID HTTP STATUSCODE          //200
+5. Verify that Response time is in within boundaries  // ResponseStatus
+6. Security Threat    //If we have any sensitive info like authorization token, we can use this assertion
+7. XPath Match   // Declare namspace
+   //ns:getEmployeeDetailsResponse/ns:return/ns:age  
+8. SOAPUI Response Pattern 
+   Verify only unique record is displayed in response :   count(//ns:name)   
+   Verify the exact attribute is displayed :  exists(//ns:age)     //true
+
+### Properties concept###
+1. What is property in SOAP UI
+   Properties can be used to hold the endpoints of your services, 
+   making it easy to change the acutal 
+   endpoints used during test execution.
+2. Why do we use it ?
+   Properties can be defined in following levels -
+   Project
+   TestSuite
+   TestCase
+   TestStep
+3. How to create properties in different levels?
+4.    ${#Project#CountryName}
+      ${#TestSuite#CountryName}
+      ${#TestCase#CountryName}
+      ${TestStepName#CountryName}
+      ${#System#PropertyName}
+      ${#Global#PropertyName}
+### How to get and set properties through groovy scripts ###
+1. How to get property?
+   def name = context.expand('${#Project#Name}')
+   def prop = context.expand('${#System#user.home}')
+   def env = context.expand('${#Env#MAVEN_HOME}')
+   log.info("property name is  : " + name);
+   log.info(prop);
+   log.info(env);
+2. How to add property?
+   //Project
+   //testrunner is an interface which provides entrypoint to SOAP UI API
+   def prop = testRunner.testCase.testSuite.project.getPropertyValue("Name");
+   log.info("project property = " + prop);
+
+   //TestSuite
+   def propSuite = testRunner.testCase.testSuite.getPropertyValue("Name");
+   log.info(propSuite); 
+
+   //TestStep 
+   def propStep = testRunner.testCase.getTestStepByName("Properties").getPropertyValue("Name");
+   log.info(propStep);
+
+  //Global Property
+  def propGlobal =  com.eviware.soapui.SoapUI.globalProperties.getPropertyValue("Name");
+  log.info(propGlobal);
+3. How to set property?
+   testRunner.testCase.testSuite.project.setPropertyValue("Name", "I am the boss");
+4. How to loop through all properties?
+   testRunner.testCase.testSuite.project.properties.each
+   {
+	key,value ->
+	log.info(testRunner.testCase.testSuite.project.getPropertyValue(key));
+   }
+
+   ##### Groovy Scripting OOPS ######
+   ### TestStep1:
+   class Hello
+{
+  def log;
+  def context;
+  def testRunner;
+
+//creating constructor
+  def Hello(log, context, testRunner)
+  {
+  this.log = log;
+  this.context = context;
+  this.testRunner = testRunner;
+  	
+  }
+  //creating a method
+  def sayHello()
+  {
+  	log.info("sayHello");
+  }
+
+   def sayBye()
+  {
+  	log.info("saying Bye ........");
+  }
+ 
+}
+
+context.setProperty("Hello",new Hello(log, context, testRunner));
+
+*** Now calling the above 2 methods from other TestStep with the following script 
+### TestStep2 under same TestCase
+def testStep = testRunner.testCase.getTestStepByName("Groovy Script1");
+testStep.run(testRunner,context);
+
+context.Hello.sayHello();
+context.Hello.sayBye();
+
+### Calling the above methods outside of TestCase
+//calling methods outside of this testcase
+def testStep = testRunner.testCase.testSuite.project.testSuites["TestSuite 3"].testCases["TestCase 1"].getTestStepByName("Groovy Script1");
+testStep.run(testRunner,context);
+
+//calling the methods now
+context.Hello.sayHello();
+context.Hello.sayBye();
+
+##### How to run a request from GUI , Groovy script , Command Line ###
+def status = testRunner.runTestStepByName("CountryISOCode");
+def result = status.getStatus().toString();
+log.info("    >>   " + result);
+
+if(result == "OK")
+{
+
+	log.info("   >>>  Test Passed");
+}
+else
+{
+	log.info("   >>>  Test Failed");
+}
+
+We cant run TestStep from commmand line Interface !!
+
+##### How to run a TestCase from GUI , Groovy script , Command Line ###
+def tCase = testRunner.testCase.testSuite.project.testSuites["TestSuite 3"].testCases["TestCase 2"]
+def prop = new com.eviware.soapui.support.types.StringToObjectMap();
+runner = tCase.run(prop,true);
+
+//the following will work also
+runner = tCase.run(null,false);
+def status = runner.getStatus().toString();
+log.info("   >>>   " + status);
+
+//number of testcases retrieval
+def testCases = context.testCase.testSuite.getTestCaseList();
+testCases.each
+{
+	log.info("   >>>   " + it.name);
+	   
+}
+
+//printing current testcaseName
+log.info("Test Name is  " +  testRunner.testCase.name);
+
+//running test cases from command prompt
+
+  cd C:\Program Files\SmartBear\SoapUI-5.7.0\bin\
+  testrunner.bat -s"TestSuite3" -c"TestCase2" D:\SOAPUI\CountryInfoService-soapui-project.xml 
+ 
+
+##### How to run a TestSuite from GUI , Groovy script , Command Line ###
+def suite = context.testCase.testSuite.project.testSuites["TestSuite2"];
+def prop = new com.eviware.soapui.support.types.StringToObjectMap();
+suite.run(prop,true);
+
+log.info("   >>>   " + suite.getName().toString() + "  - Executed successfully");
+
+//run from command line
+
+
+cd C:\Program Files\SmartBear\SoapUI-5.7.0\bin\
+testrunner.bat -sTestSuite2 D:\SOAPUI\CountryInfoService-soapui-project.xml
+
+##### How to run a Project from GUI , Groovy script , Command Line ###
+def projectName=testRunner.getTestCase().getTestSuite().getProject().getWorkspace().getProjectByName("RESTCodeWarFinal")
+def status = projectName.run(null,true)
+Thread.sleep(6000);
+log.info("  >>> status is " + status.getStatus().toString());
+//projectName.run(new com.eviware.soapui.support.types.StringToObjectMap(), false)
+
+//run project from command line
+
+
+cd C:\Program Files\SmartBear\SoapUI-5.7.0\bin\
+testrunner.bat -sTestSuite2 D:\SOAPUI\CountryInfoService-soapui-project.xml
+ 
+//https://jsonpathfinder.com/
+
+
+###  Script Assertion samples ### 
+=====================
+Script Assertion is tagged against a specific Test Step (Request)
+In Script Assertion window the following variables are available --
+log
+context
+messageExchange
+
+//check response time
+assert messageExchange.timeTaken  4000
+
+//check for Endpoint
+ log.info messageExchange.getEndpoint() 
+
+//check for TimeTaken
+ log.info messageExchange.getTimeTaken()  
+
+//check for header
+log.info (messageExchange.responseHeaders["Content-Length"])
+assert messageExchange.responseHeaders["Content-Length"] != null
+
+//check attachments
+assert messageExchange.responseAttachments.length == 0
+log.info (messageExchange.responseAttachments.length)
+
+//validate response nodes
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
+def requsetHolder = groovyUtils.getXmlHolder( messageExchange.requestContent )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def currencyName = responseHolder.getNodeValue("//m:CountryCurrencyResult/m:sName")
+assert currencyName == "Rupees"
+
+//to get response
+def resp = messageExchange.responseContentAsXml.toString()
+
+For JSON response
+-------------------------------
+//Script Assertion window for REST API 
+Case1: //get json response in script assertion
+import groovy.json.JsonSlurper
+
+def responseMessage = messageExchange.response.responseContent
+def json = new JsonSlurper().parseText(responseMessage)
+
+//node :
+{
+   "name" : "Taiwan",
+   "capital" : "Taipei",
+   "callingCodes" : ["886"]   
+}
+//assert node values
+log.info json.name
+def actualValue = json.name;
+def expectedValue = context.getTestCase().getPropertyValue("name");
+assert actualValue == expectedValue
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Case2: //get xml response in script assertion 
+import com.eviware.soapui.support.XmlHolder
+
+def responseMessage = messageExchange.response.responseContent
+def responseXml = new XmlHolder(responseMessage);
+def actualName = responseXml.getNodeValue("//placesearchresponse/result[2]/name");
+def expectedValue = context.getTestCase().getPropertyValue("name");
+assert actualValue == expectedValue
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//some assert examples --
+assert json.capital.toString() != null
+assert json.name.toString() == "[Taiwan]"
+
+testStepName = messageExchange.modelItem.testStep.name//to get the Test Step Name
+log.info testStepName
+xmlHold = messageExchange.responseContentAsXml.toString()  //to store the response as Xml string
+
+
+### Run SOAPUI from Jenkins ###
+1. How to get Jenkins
+2. How to add SoapUI commands in Jenkins
+3. How to run SoapUI tests from Jenkins
+
+Step 1 : Open SoapUI and goto the test case
+Step 2 : Right click and select Launch Test Runner
+Step 3 : Run from Test Runner and copy the commands
+cd C:\Program Files\SmartBear\SoapUI-5.4.0\bin\
+testrunner.bat -sTestSuite1 -cAssertions "C:\Users\Raghav Pal\OneDrive\Projects\SoapUIProjects\REST-Project-1-soapui-project.xml"
+Step 4 : Get Jenkins on your system
+Step 5 : Run jenkins - java -jar jenkins.war --httpPort=xxxx
+Step 6 : Create a new job and add details
+Step 7 : Run the job and validate results
+
+### PluGin : SOAPUI Pro functional testing PluGin ###
+
+How to setup API Monitors
+2. How to Monitor APIs in SoapUI
+
+
+### What is API Monitoring ### :
+Checking of your APIs at regular interval for 
+Availability
+Correctness
+Performance
+
+Step 1 : Open SoapUI - Right click on Project and Select - Monitor APIs
+Step 2 : Connect to AlertSite (SignUp | SignIn)
+Step 3 : Create Monitors
+Step 4 : Add APIs to monitor and view in AlertSite
+
+### Chain Request-Response APIs in JSON ###
+
+1st way: Using Property Transfer
+Step 1 : Add the api requests in a test case
+Step 2 : Add a property transfer step
+Step 3 : Create a new property transfer
+         It will transfer property from Source JSON Response to Target JSON Request
+Step 4 : Verify in the  Request body of the another JSON , the property value is transferred.
+         Run and check the results     
+
+2nd way: Using Groovy Scripting
+Step1: Create a step i.e. Properties and add a property name user 
+Step2: Script as following -
+         import groovy.json.JsonSlurper
+         def res = testRunner.testCase.getTestStepByName('ListUsers').getPropertyValue('response');
+         def jsonSlurper = new JsonSlurper();
+         def object = jsonSlurper.parseText(res);
+         log.info object;
+         def value = object.data[5].first_name;
+         testRunner.testCase.getTestStepByName('Properties').setPropertyValue('user',value);
+
+### Chain Request-Response APIs in XML ###
+
+1st way: Using property Transfer
+Step 1 : Add the api requests in a test case
+Step 2 : Add property transfer step
+Step 3 : Create a new property transfer
+Step 4 : Provide source and target details
+Step 5 : Click on ns: and provide xpath for source and target
+
+2nd way : Groovy script
+def response = 
+testRunner.testCase.getTestStepByName('Add').getPropertyValue("response")
+def object = new XmlSlurper().parseText(response)
+def value = object.text()
+log.info '   value is : '+value
+testRunner.testCase.getTestStepByName('MyProperties').setPropertyValue('addResult', value)
+${MyProperties#addResult}
+
+
+                                ### XMLHOLDER CLASS ###
+//For Parsing the Xml requestss and responses with XmlHolder API
+sample xml :
+<soap: Envelope>
+  <soap: Body>
+    <typ: addEmployee>
+         <typ: name ></typ: name>
+         <typ: id ></typ: id>
+         <typ: department ></typ: department>
+         <typ: age ></typ: age>
+    </typ: addEmployee>     
+  </soap: Body>
+</soap: Envelope>
+
+//GROOVY SCRIPTING ----
+import com.eviware.soapui.support.XmlHolder 
+
+def addReq = testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["add"].getPropertyValue('Request');
+def add = new XmlHolder(addReq);                 //XmlHolder obj will hold the request SOAP xml for further updates
+add.setNodeValue("//typ:addEmployee/typ:id", "testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue('id')");
+add.setNodeValue("//typ:addEmployee/typ:name", "testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue('name')");
+add.setNodeValue("//typ:addEmployee/typ:age", "testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue('age')");
+add.setNodeValue("//typ:addEmployee/typ:department", "testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue('department')");
+
+def newModifiedXml = add.getXml();   //It will svw ethe xml at this point 
+log.info newModifiedXml;    // output : data will be populated as inputs inside the request Xml
+testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["add"].setPropertyValue("Request" , newModifiedXml);    //This will replace the new modified xml in the request property
+//Hit the request XML now i.e call the service --
+def addTestStep = testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["add"];
+
+import com.eviware.soapui.impl.wsdl.testcase.WsdlTestRunContext     //import this package on top
+def contextAddEmployee = new WsdlTestRunContext(addTestStep);
+addTestStep.run(testRunner, contextAddEmployee);
+
+### END TO End Automation Test ###
+//Hit Get Employee & generate response ... Validtae the response if it hava ethe name which added in previous step
+
+def getReq = testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"].getPropertyValue("Request");
+def get = new XmlHolder(getReq);
+def name = testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue('name');
+get.setNodeValue("//typ:getEmployeeDetails/typ:employeeName",name );
+def newGetXml = get.getXml();
+testRunner.testCase.testSuite.testcases["GetEmployee"].testSteps["get"].setPropertyValue("request" , newGetXml);
+
+//now run the step i.e execute the getService
+def getTestStep = testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["get"];
+def contextGetEmployee = new WsdlTestRunContext(getTestStep);
+getTestStep.run(testRunner, contextGetEmployee);
+
+//Validating the name between request and response 
+def getResponse = testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"].getPropertyValue("Response");
+def getEmpRespose = new XmlHolder(getResponse);
+def actualValue = getEmpRespose.getNodeValue("//ns:name");
+
+assert actualValue == name;    
+
+### SPECIAL ASSERTIONS - JSON ####
+Grab the server value with id 12345
+JSON Path query: photos.photo[?(@.id == '12345')].server
+
+### SET UP & TEAR DOWN SCRIPTS ###
+Setup - runs before running the element in context
+Teardown - runs after running the element in context
+
+
+groovy code to set and get setup and teardown scripts 
+--------------------------------------------------------------------------
+testRunner.testCase.testSuite.project.getTestSuiteByName('TestSuite1').getTestCaseByName('TestCase1').setSetupScript('log.info "setup"')
+testRunner.testCase.testSuite.project.getTestSuiteByName('TestSuite1').getTestCaseByName('TestCase1').setTearDownScript('log.info "teardown"')
+
+log.info ("  --  "+testRunner.testCase.getSetupScript());
+log.info ("  --  "+testRunner.testCase.getTearDownScript());
+
+
+groovy code can be given at project load script to load setup and teardown scritps from file
+--------------------------------------------------------------------------------------------------------------------------
+def su = new File("setup.txt").text
+def td  = new File("teardown.txt").text
+
+project.getTestSuiteList().each { testSuite -
+ testSuite.getTestCaseList().each { testCase -
+  testCase.setSetupScript(su)
+  testCase.setTearDownScript(td)
+ }
+}
+
+//Script Assertion window -- only allows context , messageEchange variable
+This is applicable for a particular testStep as part of assertion.
+import com.eviware.soapui.support.XmlHolder;
+
+def holder = new XmlHolder(messageExchange.responseContentAsXml);  //this will grab the testSep response into the variable
+holder.namspaces["ns1"] = "https://maps.google.com/api/place/txtsearch/json";
+def actualValue = holder.getNodeValue("//ns1:Response/ns1:results/ns1:e[1]/ns1:id");
+def expectedValue = context.getTestCase().getPropertyValue("id"); 
+assert actualName == expectedValue;
+
+//property transfer case using scriptAssertion window without using property transfer
+logic: get the node value from a response xml -> place that value in a global porpery in Test Case level
+       -> this value will be part as an input in another request xml 
+def ref = holder.getNodeValue("//ns1:Response/ns1:results/ns1:e[1]/ns1:reference");
+context.getTestCase().setPropertyValue("reference" , ref);
+now the final steprequest will take the input reference value from
+${#TestCase#reference}
+

@@ -1,0 +1,57 @@
+### Before-Update-the-deployment.yaml ###
+
+D:\kubernetes\object>kubectl get rs
+NAME                       DESIRED   CURRENT   READY   AGE
+mydeployments-664f66d8b4   2         2         2       26s
+
+D:\kubernetes\object>kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+mydeployments-664f66d8b4-htn25   1/1     Running   0          91s
+mydeployments-664f66d8b4-r57v7   1/1     Running   0          91s
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME                             READY   STATUS    RESTARTS   AGE     IP           NODE       NOMINATED NODE   READINESS GATES
+mydeployments-664f66d8b4-htn25   1/1     Running   0          2m27s   172.17.0.7   minikube   <none>           <none>
+mydeployments-664f66d8b4-r57v7   1/1     Running   0          2m27s   172.17.0.8   minikube   <none>           <none>
+
+## After updating the deployment.yaml file ##
+
+D:\kubernetes\object>kubectl apply -f deployment.yaml
+deployment.apps/mydeployments configured
+
+D:\kubernetes\object>kubectl get rs
+NAME                       DESIRED   CURRENT   READY   AGE
+mydeployments-66449876d7   2         2         2       71s
+mydeployments-664f66d8b4   0         0         0       4m27s
+
+D:\kubernetes\object>kubectl get pods -o wide
+NAME                             READY   STATUS    RESTARTS   AGE    IP           NODE       NOMINATED NODE   READINESS GATES
+mydeployments-66449876d7-z2wtc   1/1     Running   0          96s    172.17.0.6   minikube   <none>           <none>
+mydeployments-66449876d7-zw7g8   1/1     Running   0          103s   172.17.0.5   minikube   <none>           <none>
+
+D:\kubernetes\object>kubectl rollout status deployment mydeployments
+deployment "mydeployments" successfully rolled out
+
+D:\kubernetes\object>kubectl rollout history deployment mydeployments
+deployment.apps/mydeployments
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+
+## Now if we rolled back into last revision , following will happen ##
+D:\kubernetes\object>kubectl rollout undo deployment mydeployments
+deployment.apps/mydeployments rolled back
+
+D:\kubernetes\object>kubectl get rs
+NAME                       DESIRED   CURRENT   READY   AGE
+mydeployments-66449876d7   2         2         2       7m40s
+mydeployments-664f66d8b4   1         1         0       10m
+
+D:\kubernetes\object>kubectl get rs
+NAME                       DESIRED   CURRENT   READY   AGE
+mydeployments-66449876d7   0         0         0       7m57s
+mydeployments-664f66d8b4   2         2         2       11m
+
+**Note: The new pods get generawd from old replicasets**
+

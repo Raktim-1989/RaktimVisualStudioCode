@@ -1,0 +1,50 @@
+
+### Architecture ###
+XCUI driver --> after IOS version 9.3
+
+Appium client ---->> sends a JSON WIRE Protocol request --->>> Appium server(Node.js) ---> will connect to XCUI Test driver --> 
+will connct to WebDriver Agent (Facebook) 
+               -- launch the app 
+               -- type something
+               -- kill something
+ ---> Device / Simulator (physical / virtual mobiles)
+
+for IOS version <9.3
+
+client --> server --> UI Automation module --> will transfer commands to Bootstrap.js (click(0, tab(), type()) -->> Device / Simulator
+
+
+### WorkFlow for IOS:
+1. Appium server is on diff machine (192.168.1.10: 9268) , we will connect to this server from our host machine i.e. appim client library
+2.  we will customise the appium grid as folloiwng via DesiredCapabilities 
+    DesiredCapabilities{
+        "AutomationName" : "XCUITest"
+    }
+    DesiredCapabilities{
+        "AutomationName" : "UIAutomation"
+    }
+ 3. we will send the dc object to the rest components like WebDriver Agent---
+
+### Workflow for Android
+
+client --> server --> UI Automator2 (appium module provided by Google) --> will connect to devices / emulator 
+                    -- uses appium-android bootsrap .jar
+
+DesiredCapabilities{
+    "automationname" : "UIAutomator2"
+}
+
+
+### drivers available in APPIUM ecosystem ###
+1. UIAutomator2 driver --> launcing android device
+   Espresso Driver     -->   Expresso Server -->> Expresso -->> launching android device 
+   -- both these drivers provide chromedriver as well to launch chrome browser
+   
+2. window driver (provided by microsoft) -->> winapp driver --> windows app
+3. MAC Driver (provided by apple) -->> appium MAC --> MAC apps
+4. IOS -> XCUI TEST -->> WD Agent --> IOS devices app (version > 9.3)
+   IOS -> UIAutomation --IOS devices appp (version < 9.3)>)
+
+All these drivers extends Appium classes !!
+
+

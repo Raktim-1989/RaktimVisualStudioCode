@@ -1,0 +1,102 @@
+Javascript
+
+Html/css  for attractive
+Javascript for interactive
+Angualar, React - these are frontend frameworks to execute javascript 
+node.js --> backend environment (server side)
+
+When we write code in javascript -> browser interprets /converts into machine code i.e. 
+Browser engine(e.g. V8 from chrome) converts the JS code into machine code 
+
+//Node.js
+Node.js is a runtime environment which helps javascript to execute on a stand alone machine
+It's a engine which runs javascript on a physical machine.
+Now, when the HTTP components gets added with node.js, it helps javascript running on server as well.
+
+So, Node.js is a runtime environment which uses the V8 engine to execute javascript !!
+
+//NPM (Non package Manager)
+These are like the dependencies which will give all packages/modules to build the 
+application in javascript
+
+
+
+
+
+i. Javascript is a client side language or browser side language.It is running inside browser
+Clicking button, filling form ---->> all these are from javascript (coming from browser)
+
+ii. Every browser implements one javascript engine. For chrome it's V8(written by google in C++)
+
+iii. On based on engine, they created node.js which is a server (node.js is running on server)
+
+iv. Add index.html inside 'VS editor' --> !ENTER --> Install plugin 'LIVE SERVER' --> right click and
+  --> open with live server --> app will be up & running
+Under body
+<body>
+<h1>Welcome to Raktim's javascript training</h1>
+<h1>Hello Raktim</h1>
+<script>
+console.log('Hello Javascript')
+</script>
+</body>
+
+
+//data-types:
+Primitives:
+
+String
+Boolean
+Number
+Undefined
+Null
+
+Reference types:
+Object
+Array
+Functions
+
+i. Let data = 'raktim';
+console.log(data);
+
+ii.//Objects
+Let data =
+{
+   Name: "raktim",
+   age: 30
+}
+Using dot notation to access property of an object
+console.log(data.Name)
+console.log(data.age)
+
+iii.//dynamic typing concept
+  Let d = 'raktim';
+    d = 10;
+console.log(d);
+
+iv. //Arrays concept
+Let language = ['java','JS','Python']
+Console.log(language);
+console.log(language.length);
+language[1] = 'C'; //updating 1st index
+
+v. //functions concept
+Function getName()
+{
+   console.log('get name called');
+}
+
+v1. //call function
+    getName();
+
+
+
+//Operators:
+Arithmetic
+Assignment
+Ternary
+Comparison
+Logical
+Binary
+
+

@@ -1,0 +1,178 @@
+https://www.analyticsvidhya.com/blog/2021/10/end-to-end-guide-to-docker-for-aspiring-data-engineers/#h2_8
+
+https://www.analyticsvidhya.com/blog/2021/10/end-to-end-guide-to-docker-for-aspiring-data-engineers/
+
+i. docker pull ubuntu:latest // it menas docker clinet is requesting docker daemon to pull the imgae 
+                        //docker dameon will pull image from docker hub and will place once copy in docker server
+ii. docker run -it --name raktim ubuntu:latest /bin/bash  //it will create + start container from image in interactive mode   & inside terminal
+iii. service docker status //to check docker starts or not 
+iv. docker start containerName //start docker
+v.  docker attach containerName  //go inside container
+vi. docker ps -a //see all containers created   ps menas process status
+vii. docker ps   //see all running containers
+ix.docker stop containerName //stop container
+x. docker rm containerName //remove container
+xi. docker images // list of images inside docker host/local docker
+xii. docker search imagename // search inside docker hub 
+xiii. docker run -it ubuntu /bin/bash //this command will go inside ubuntu container
+      cat etc/os-release    //this command will fetch the OS details inswide container
+xiv. exit  -- to come out of container and container will stop
+
+
+###CREATE ONE CONTAINER -> CREATE A FILE INSIDE IT -> CREATE A NEW IMAGE OUT OF THIS CONTAINER --> CREATE A NEW IMAGE
+
+Step1: docker run -it --name raktimcontainer ubuntu /bin/bash
+Step2: cd tmp
+Step3: touch file
+Step4: exit
+Step5: >docker diff raktimcontainer     //check the changes
+o/p : C /tmp
+A /tmp/raktimfile
+C /root
+A /root/.bash_history
+Step6: create a new image of this container docker commit raktimcontainer updatedimage
+Step7: run a new container from this updated image 
+    docker run -it --name updatedcontainerraktim updatedimage /bin/bash
+Step8: Verify the file creted is available in the new container or not 
+root@61e7caa9e7fc:/# ls
+bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@61e7caa9e7fc:/# cd tmp
+root@61e7caa9e7fc:/tmp# ls
+raktimfile
+
+#######################Dockerfile####################
+        A text file to build a dockerimage
+        components:
+        i. FROM: For base image.this command must be on top of docker file
+        ii.RUN: to execute commands, it will create a layer in the image
+        iii. MAINTAINER: Author/owner of the dockerfile
+        iv. COPY: we can copy files from our local docker hub (like docker dameon) to any destination. we cant  download from internet or any remote repo.
+        v. ADD: Similar to COPY but, it provides a feture to download files from internet, also we extract file at docker image side
+        vi. EXPOSE: to expose ports such as 8080 for tomcat 80 for nginx etc
+        vii. WORKDIR: to set workdir of a container
+        viii. CMD: execute commands during container execution
+        viii. ENTRYPOINT: Similar to CMD , but has highest priority. first commands will be executed by ENTRYPOINT only.
+        ix. ENV : environment variables only
+
+        Lab:
+        Step1: gvim Dockerfile and enter following commands
+        FROM ubuntu
+        LABEL name="Raktim Sarkar"
+        RUN echo "Welcome to RaktimAutomationZone" > /tmp/testfile
+        Step2: docker build -t test1 .
+        Step3: docker run -it --name test1container test1 /bin/bash
+Logic: Every command will generate an ImageID layer after layer, bottom to up approach.
+Every imageID will run inside a container , after that specific command completes, the containerID will removed 
+e.g. FROM ubuntu
+     RUN apt-get update && apt-get install -y tree
+     RUN touch /tmp/test1.text
+     RUN touch /tmp/test2.text
+     
+
+
+ ###################DOCKER-VOLUME################
+        VOLUME is a directory, containers can share volume with each other .volumes can be shared from "docker host to containers" and "containers to containers".
+        i. even containers tops, volume can be accesses
+        ii. we can declare a directory as volume once creating a container
+        iii. we cant create volume from existing container 
+        iv. you can share once volume across N number of containers 
+
+****How to create docker-volume and we can share with other containers ****
+
+Step1: Create a docker file as following -
+FROM ubuntu
+VOLUME ["/myvolume"]
+Step2: docker build -t myimagevolume .
+Step3: docker run -it --name volumecontainer1 myimagevolume /bin/bash
+Step4: go inside container1 and do following 
+        root@9542dacd93a0:/# ls
+        bin   dev  home  lib32  libx32  mnt       opt   root  sbin  sys  usr
+        boot  etc  lib   lib64  media   myvolume  proc  run   srv   tmp  var
+        root@9542dacd93a0:/# cd myvolume
+Step5: Crete another container in such a way it shares the same volume created for container1
+docker run -it --name container2 --privileged=true --volumes-from volumecontainer1 ubuntu /bin/bash
+Step6: Now verify whether myvolume and the respective files are there under this 2nd container
+        root@582e09509a5d:/# ls
+        bin   dev  home  lib32  libx32  mnt       opt   root  sbin  sys  usr
+        boot  etc  lib   lib64  media   myvolume  proc  run   srv   tmp  var
+        root@582e09509a5d:/# cd myvolume
+        root@582e09509a5d:/myvolume# ls
+        filex  filey  filez
+
+***How to create volume using command*******
+Step1: docker run -it --name container3 -v /volume2 ubuntu /bin/bash
+       Create some file inside it 
+Step2: docker run -it --name container4 --privileged=true --volumes-from container3 ubuntu /bin/bash
+        root@038b1ca4944b:/# cd volume2
+        root@038b1ca4944b:/volume2# ls
+        walmart1  walmart2  walmart3
+        root@038b1ca4944b:/volume2# touch rajput
+        root@038b1ca4944b:/volume2# ls
+        rajput  walmart1  walmart2  walmart3
+        root@038b1ca4944b:/volume2# exit
+        exit
+        PS D:\docker\dockervolume> docker start container3
+        container3
+        PS D:\docker\dockervolume> docker attach container3
+        root@21d658820c3a:/# ls
+        bin   dev  home  lib32  libx32  mnt  proc  run   srv  tmp  var
+        boot  etc  lib   lib64  media   opt  root  sbin  sys  usr  volume2
+        root@21d658820c3a:/# cd volume2
+        root@21d658820c3a:/volume2# ls
+        rajput  walmart1  walmart2  walmart3
+
+ ********Demo*****
+ docker container run --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+ >docker container run -it -d -v f15f8146268daf0206b90065f76724590a55ed77f6dea6f4c0f02bc501a0b772 /var/lib/mysql
+ 
+
+
+###########FEW CONTAINER COMMANDS########################
+        i. docker run -d ubuntu sleep 30 //it will be active till 30 seconds 
+        ii. how to exit from container and that too, it will be up & running 
+        docker run -it ubuntu /bin/bash 
+        Now click CONTROL + P + Q from keyboard 
+        It will come out of container but in active state 
+        If we use docker ps  --> we will see that container still there 
+        iii.  list of containers --> docker container ls -aq
+        iv. remove all containers --> docker rm $(docker container ls -aq)
+        v. How to inspect containers :
+        docker run -d nginx
+        docker inspect containerId 
+        In the network section , we will catch ip address 
+        Note: we cant access nginx app from our local host since both shares diff network !!
+        vi. docker container top ContainerID //check the process ID inside the container
+        vii. docker container stat
+
+        To access nginx from our local machine, we need to forward the request from nginx port 80 to our local machine port 3600
+
+        ----docker run -d -p 3600:80 nginx
+        It means, whenever a request is coming in port 3600 it will forward the request to ngnix port 80
+        we can access noe using our IP address:port 192.168.0.100:3600
+
+####Installing softwares inside containers#############
+        i. docker container exec -it congtainerID /bin/bash
+        ii. apt-get install update
+        iii. apt-get install tree git -y
+        iv. Now come out of the container while in running state(CONTROL + P + Q from keyboard) and do following --
+        docker container export containerID >my_ubuntu_tree_git.tar
+        v. Now import the tar file from another machine (user 2 will do this)
+        docker image import  my_ubuntu_tree_git.tar imageName
+        vi. docker images 
+        o/p : imageName
+        vii. create a new container with this image and check the git & tree already there     
+
+#####docker image save & docker image load####
+        When we want to send any image to other person, first we have to svw ethe image as following --
+        i. docker image save image > image.tar
+        ii. now delete the image i.e. docker rm -f image
+        iii. docker image load < image.tar
+
+        difference between docker container export & docker docker image save 
+        both generates .tar file but in case of docker container export command , it creates image out of running container
+        it wont fetch from layer wise , as in case of docker image save it will fetch layer wise
+
+
+
+
+
