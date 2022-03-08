@@ -90,6 +90,19 @@ IOSTouchAction t = new IOSTouchAction(driver);
 t.tap(tapOptions().withElement(e)).perform();
 
 **********************
+IOS on real devices
+
+Steps:
+1. First create provising profile of WebDriverAgentRunner 
+   why am i doing this ? //because this will give BundleID
+2. Build youur WebDriverAgentRunner project
+3. Build the app which you need to Run on XCode with your real device 
+ 
+ Then it generates .app file !!
+4. Pass this path in your desired capabilities
+
+*****************
+
 
 
 

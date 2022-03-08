@@ -70,7 +70,7 @@ Trigger: Trigger the entire testCases from Jenkins which a parameterized build
 By using the cloud approach , we can skip starting & stopping appium server , killing nodes/ports
 before starting any tests , launching emulator / physical device and so on..
 
-1. Will create 'cloudCapabilities() which will accept 'appName' as parameter
+1. Will create 'cloudCapabilities() which will accept 'appName as parameter
 2. will set up all the pre-requisities like opening an emulator (virtual device / physical device) ,
    appium server will be launched in cloud. we will pass on all the configurations as a capabilities object in browserStack and the cloud will do the rest.we will just move the direction of the test cases to cloud 
 3. We will signUp in BrowserStack and browserStack wil give us an authenticate 'UserName' &    'key'. Also, we have to deploy the .apk file in browserStack cloud and after that , we will get the server where this app is hosted. 
