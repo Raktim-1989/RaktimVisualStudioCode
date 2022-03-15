@@ -169,7 +169,8 @@ CNTRL + 0 -> back to normal zoom (100%)
 
 *********************AUTO SUGGESTIVE DROPDOWN*************
 Dynamic dropdpwn:
-We are using Javascriptexecutor here since, the textvalue is disabled in the texfiled for the folloiwng application 
+We are using Javascriptexecutor here since, the textvalue is
+ disabled in the texfiled for the folloiwng application 
 
 driver.get("https://ksrtc.in");
 WebElement from = driver.findElement(By.xpath(""));

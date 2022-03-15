@@ -22,7 +22,7 @@ and if we pass this command through Jenkins test will run on chrome only.
 i.chnage the base class like -> String browsername =  System.getProperty("browser");
 if(browsername.equals("chrome"))
 {
-   driver = new ChromeDrivee();
+   driver = new ChromeDriver();
 }
 
 In jenkins "build" section give -->>>>mvn test -Dbrowser = "$browser"
@@ -46,7 +46,7 @@ i. install build pipeline plugin ->             manage jenkins >manage plugins >
 ii. Add ' build pipeline view' and configure the set up   ->> click the '+' button and add 'build pipeline view'  and add the initial job 'build' job 
 iii. Run & Validate
 
-Delivery Pipeline: It's a presentation of build pipeline.
+Delivery Pipeline: Its a presentation of build pipeline.
 
 Scripting Pipeline:
 1.In this pipeline, all the previous mentioned jobs are like stages

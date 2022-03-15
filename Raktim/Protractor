@@ -1,0 +1,471 @@
+### Basics ###
+1. WebDriver is little uncompatible when angular comes into picture. Most websites uses Angualar , react JS framework as part of web application development. In those cases we need  protractor to automate angular & angular JS aplications . 
+2. WebDriver + Angualr Support = protractor
+3. It is developed & maninatined by Angualr team (Google).
+4. Protractor is a node.js program built on top of webdriverJS.
+   It means the basic layer is selenium webdriver only, on top of this , it uses a wrapper code  
+   as protractor. 
+5. It uses JavaScript as core language, it uses typescript as well.
+6. JavaScript + few additional features(OOPS) = TypeScript
+7. Protractor API remains same in syntaxes for both Javascript &       typescript,and it is originally built in JS. Differences arises when we develop test framework in protractor. 
+8. Why Node.js ?
+   NPM -> Node Package Manager, the softwares which has a dependency on Nodes are kept in a repository. It's like Maven where depeneencies in a central maven repo. To download protractor API from node repo, we need 'npm' command to connect to Node repository and download packages !!
+9. npm install -g protractor
+   C:\Users\USER\AppData\Roaming\npm\node_modules\protractor
+   This will install two command line tools, protractor and webdriver-manager. Try running protractor --version to make sure it's working.           
+10. The webdriver-manager is a helper tool to easily get an instance of a Selenium Server running. Use it to download the necessary binaries with
+    "webdriver-manager update"
+11. We need selenium server gets up & running before working with protractor API. Because this selenium server will help to communicate between protractor and  the browsers.      
+      Protractor --- >> Selenium server receives request -->> sends the request o browser to perform actions .
+Now , Now start up a server with:  "webdriver-manager start"     
+This will start up a Selenium Server and will output a bunch of info logs. Your Protractor test will send requests to this server to control a local browser. You can see information about the status of the server at http://localhost:4444/wd/hub.
+
+### Jasmine Framework ###
+1. Protractor uses 'Jasmine' framework to build test cases . Jasmine is a framework to build JS Test Cases.
+2. desc -> Its a test suite 
+   it   -> its a test case , in Jasmine we call it as spec , 
+   spec(Jasmine Terminology) - >  its a test file //like a class 
+3. Every spce should have 'describe' & 'it' blocks mandatory.   
+4. Configuration file -> its a driver file from where we will run the .js files (spec files will be kept there). //its like TestNG.xml file from TestNG
+5. Protractor TestRunner to run test cases 
+   go to project < right click & run as configurations < Node.js applications <  give the protractor built path name (copy protractor folder from  C:\Users\USER\AppData\Roaming\npm\node_modules\protractor and paste it in your project in eclipse)  < add this '${workspace_loc:/ProtractorTutorial/protractor/built/cli.js}' in MainFile section   < Go to 'Arguements' section from ProtractorTestRunner and add 'Configuration'(configuration.js file) as Application Arguments 
+   Now the TestRunner is ready !!!
+6. Install the Angular JS Eclipse plugin to import the auto suggestion box in the IDE . configure the project into term project and then restart eclipse. 
+
+### Javascript Asynchronous and its problem with Protractor ###
+Consider the folloiwng line of codes :
+                browser.get('https://angularjs.org');
+	        	browser.get('http://juliemr.github.io/protractor-demo/');
+	        	browser.sleep(9000);
+	        	console.log("I am the last step to execute...");
+If we run the above codes , console.log() is executing first and afterwards the URLs are launched. This is the headache in javaScript . We have to come across this issue . 
+
+Solution: Promise
+Blogs : https://spin.atomicobject.com/2014/12/17/asynchronous-testing-protractor-angular/
+
+https://www.sohamkamani.com/blog/2016/03/14/wrapping-your-head-around-async-programming/
+
+https://bridge360blog.com/2015/05/05/improving-protractor-tests-using-shared-functions-and-promises/
+
+1. Every JavaScript steps return promise.
+2. Each promise having 3 steps 
+i. Pending
+ii. Resolved
+iii. Rejected
+3. In Synchronous , we will move to next step only if the promise for current step is either Resolved Or Rejected . //like selenium with Java /python
+4. In Asynchronous: WebDriver JS will move to next step even if the promise of current step is pending . 
+5. To avoid the Asynchronous nature, protractor team came up with some API where 90% of thier API (acrtions performed on browsers) will not move to the next stpe until the promise of the current step is Resolved. 
+6. The 10% where Protractor can't support promise resolving : If we want to retrieve anything from browser - then that particular functionality related methods have not support of promise resolving . 
+
+To avoid the above 10% issue do the following --
+                browser.get('https://angularjs.org');
+	        	browser.get('http://juliemr.github.io/protractor-demo/').then(function() 
+	        			{
+	        		//browser.sleep(9000);
+		        	console.log("I am the last step to execute...");
+		        	
+	        	        });
+
+we have implemented .then(function()
+{
+    //execute the asynchronous javascript code 
+}) after the browser get launched. this is how we can implement promise resolving for this 10% case .
+
+
+### Understand Global Variables ###
+Global Variables
+Protractor exports these global variables to your spec (test) file:
+
+browser - A wrapper around an instance of WebDriver, used for navigation and page-wide information. The browser.get method loads a page. Protractor expects Angular to be present on a page, so it will throw an error if the page it is attempting to load does not contain the Angular library. (If you need to interact with a non-Angular page, you may access the wrapped webdriver instance directly with browser.driver).
+
+element - A helper function for finding and interacting with DOM elements on the page you are testing. The element function searches for an element on the page. It requires one parameter, a locator strategy for locating the element. See Using Locators for more information. See Protractor's ElementFinder test suite (elements_spec.js) for more examples.
+
+by - A collection of element locator strategies. For example, elements can be found by CSS selector, by ID, or by the attribute they are bound to with ng-model. See Using Locators.
+
+protractor - The Protractor namespace which wraps the WebDriver namespace. Contains static variables and classes, such as protractor.Key which enumerates the codes for special keyboard signals.
+
+### A locator tells Protractor how to find a certain DOM element. Protractor exports locator factories on the global by object. The most common locators are ###
+// Find an element using a css selector.
+by.css('.myclass')
+
+// Find an element with the given id.
+by.id('myid')
+
+// Find an element using an input name selector.
+by.name('field_name')
+
+// Find an element with a certain ng-model.
+// Note that at the moment, this is only supported for AngularJS apps.
+by.model('name')
+
+// Find an element bound to the given variable.
+// Note that at the moment, this is only supported for AngularJS apps.
+by.binding('bindingname')
+
+### jasmine Assertions ###
+expect(true).toBe(true);
+1. jasmine takes care of resolving promise 
+2. If we don't use jasmine as following, we have to resolve promise when we are returing something from browser as following 
+	        	element(by.css("h2[class = 'ng-binding']")).getText().then(function(text)
+	        			{
+	        		          console.log("text is " +  text);
+	        	        });
+3. But uing jasmine we can use the following , as jasmine internally uses the above mechanism to resolve promise. 
+	expect(element(by.css("h2[class = 'ng-binding']")).getText()).toBe("8");
+### Running protractor tests in diff browser ###
+1. configure the following cap in the configuration.js file 
+capabilities: {
+  'browserName': 'firefox'
+}
+2. when we do 'webdriver-manager update' protractor will automatically download the respective driver files and will keep in its default path. 
+C:\Users\USER\AppData\Roaming\npm\node_modules\protractor\node_modules\webdriver-manager\selenium
+3. By default ie driver is not there. we have to use the following command 
+to use ie driver : webdriver-manager update --ie --versions.ie=3.9.0
+
+### Running Protractor Tests on Non-Angular Sites ###
+1. If we use non-angular websites using protractor we will get the error
+   "Could not find angular on url http://google.com"
+   It means protractor always expect angular components to be loaded after page launch. if it doesn't find any angualar component, it fails.
+2. How to disable waiting for Angular
+If you need to navigate to a page which does not use Angular, you can turn off waiting for Angular by setting browser.waitForAngularEnabled(false). For example:
+
+browser.waitForAngularEnabled(false);
+browser.get('/non-angular-login-page.html');
+
+element(by.id('username')).sendKeys('Jane');
+element(by.id('password')).sendKeys('1234');
+element(by.id('clickme')).click();
+
+browser.waitForAngularEnabled(true);
+browser.get('/page-containing-angular.html');   
+
+### Deep driver into protractor ###
+1. Chain Locators
+   i. Repeater Locator: when we will see 'ng-repeat' as attribute name
+      we will use repeater locator. 
+   ii. use the code by.css("td:nth-child(3) to chain parent-child relationship as following
+   element(by.repeater("result in memory")).element(by.css("td:nth-child(3)")).getText()
+	        	.then(function(text)
+	        			{
+	        		            console.log(text);
+	        		
+	        	        });
+  we will search the 'td' element from the parent 'result in memory' element , afterwards we will connect with child(3) with the code 'td:nth-child(3)'                    
+
+2. element().all(by.repeater("result in memory")).count() 
+//It will retrieve the count of the table rows for the same repeater ID
+3.  element().all(by.repeater("result in memory")).each(function(item) {
+	        	
+	        	                                    item.element(by.css("td:nth-child(3)")).getText().then(function(text) 
+	        	                                    		{
+	        	                                    	           console.log(text);
+	        	                                            })
+	                                                                           });
+
+ Explanation of above code :
+ i. element().all() will return list of elements if there are multiple elemenst satisfying the repeater 'result in memory'
+ ii. After that, we will count a for-each loop to ierate each record using .each(function(item)
+ {
+
+ })
+ iii. Then we will work with that particular item based on our rq. here we want to grab the text for 3rd child of each item
+
+ ### Actions and its importance in Angular UI ###
+ 1. Actions class is used when we chain events like
+    autosuggestive dropdpwn handling 
+    send some value -> dropdown options get populated -> press down arrow
+    -> select any value -> press ENTER 
+ browser.actions().mouseMove(element(by.model("locationQuery")).sendKeys("London")).perform();
+ //arrow down action
+ browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+ browser.actions().sendKeys(protractor.key.ENTER).perform().then(function() {
+	   browser.sleep(5000);
+	   //search results 
+	   //providing jasmine assertions      		             
+	   expect(element.all(by.css("div[ng-mouseover='onSearchResultOver(searchResult)']")).count()).toEqual(7);
+
+      //clicking 1st item from the search result page     		             
+	   element.all(by.css("div[ng-mouseover='onSearchResultOver(searchResult)']")).get(0).click();
+	   element.all(by.css("a[ng-href*= 'London/River Island']")).click().then(function() 
+	        		 {
+	        		    browser.sleep(3000);
+	        		 });
+	        		    	});
+2. Window Handling -> This is as same as selenium
+   browser.getAllWindowHandles();
+   browser.switchTo().window(windowID);
+   browser.getAllWindowHandles().then(function(handles)
+	        		          {
+	      //title of the 1st window page
+	      browser.getTitle().then(function(title) 
+	        	{
+	        		console.log(title + "title of the page before switching to child window");
+	         })
+	        		             	            	  
+	        		 })
+	        		             	            	  
+	       browser.switchTo().window(handles[1]);   //switch to 1st window	        	
+	           
+ 
+### Alert Handling ###
+browser.waitForAngularEnabled(false);  //for handling non-angular sites using protractor
+	        	browser.get('https://rahulshettyacademy.com/AutomationPractice/');
+	        	element(by.id("alertbtn")).click().then(function() {
+	        		    browser.sleep(5000);
+	        		
+	        	});
+	        	
+	        	browser.switchTo().alert().accept().then(function()
+	        			{
+	        		                   browser.sleep(5000);
+	        	        });
+### Frames handling ###
+browser.waitForAngularEnabled(false);
+	        	browser.driver.manage().window().maximize();
+	        	browser.get('https://rahulshettyacademy.com/AutomationPractice/');
+	        	browser.switchTo().frame("courses-iframe");
+	        	element(by.css("a[href= 'https://courses.rahulshettyacademy.com/sign_in']")).then(function()
+	        			{
+	        		           browser.sleep(3000);
+	        	       })
+	        	
+	        		})
+### Synchronization concepts in protractor ###
+1. Protractor has only knowledge on angular components loading.It will wait by default if it checks the page is loading. we don't need to implement any timeouts over there.
+2. If the page is Non-angular, the protractor itself is not aware if it is loading. then we need to implement the synchronization concepts.
+
+ExpectedConditions  class 
+var EC = protractor.ExpectedConditions;
+browser.wait(EC.invisibilityOf(element(by.id("loader"))), 5000);  //this is where we are asking the page to wait to become this element invisible 
+	        	
+	        	element(by.id("results")).getText().then(function(text)
+	        			{
+	        		           console.log(text);
+	        	        })
+	        	
+	        	
+	        		})
+	        	
+
+### locators important ###
+When multiple elements having same tag name & locators we can filter out using cssContainingText
+1. cssContainingText("locator address"  , value) ;
+example:
+<select id = "exampleFormControlSelect1">
+   <option>Male</option>
+   <option>Female</option>
+</select>
+
+element(by.cssContainingText("select[id = 'exampleFormControlSelect1'] option" , "Female")).click();    //This will go to the 'Female' option
+
+2. buttonText
+    element(by.buttonText("Submit")).click();
+3. linkText
+   	element(by.linkText("Shop")).click();
+4. partialLinkText
+    	   
+*************
+IMPORTANT TRICKS
+7
+
+Jasmine has timeout for each spec i.e. each it in jasmine framework. so if any spec (it) exceeds jasmine spec's default timeout then it fails that spec.
+
+Solution: To override jasmine spec timeout for one individual spec, pass a third parameter to it: it(description, testFn, timeout_in_millis)
+
+it('description of test case', function() {
+   /*your test 
+               steps
+                    here*/
+},120000);//120 seconds timeout for this spec
+
+Link: https://github.com/angular/protractor/blob/master/docs/timeouts.md
+
+***************
+Framework Development Plan
+1. Understand Objects in JS
+2. Page Object Mechanism in Protractor
+3. SetUp & TearDown methods for Tests
+4. Importance on Prepare function in Framework
+5. Understand Package.json
+6. Remove the dependency of local system dependencies
+7. Data Driven testing in protractor
+8. Reports generation for test results
+9. Controlling testcases execution from config file.
+10. Build npm commands to trigger test cases from cmd prompt
+11. Importance of CI
+12. Integrate protractor with jenkins
+
+*************
+Accessing objects from another JS file 
+JSObjectDemo.js 
+function car ()
+{
+	
+   this.color = "red";
+   this.engine = "turbo";
+   this.brand = "BMW";
+ 
+   
+   this.getmodel = function()
+   {
+	   console.log("this is 2020 model");
+   };
+
+};
+module.exports = new car();   //this is where we are exporting the object
+
+JSobjectdemo2.js  -> we will catch the object from this java file
+    var obj = require("./JSObjectDemo.js")   //require( is like extending from parent class in java .we are mentioning the parent class js path in require block .
+     obj.getmodel();
+	 console.log(obj.color);
+
+*************
+### onPrepare() ###
+onPrepare :  function()
+{
+
+}
+we will mention this tag in the configuration.js file . it means before executing any 'specs' file this 'onPrepare()' block will be executed . 
+we can mention lots of things under this onPrepare block
+ i. We can mention report details under this block
+ ii. for non-angular websites, we will mention browser.waitForAngularEnabled(false);
+ iii. maximize browsers //browser.driver.manage().window().maximize();
+
+### Understand Package.json ###
+When we built any project using node.js , this package.json is mandatory
+like, when we built any project using maven, pom.xml is mandate.
+
+1. From package.json we will connect to node.js/npmJs and will download all the dependencies we need.it's like pom.xml in maven.
+in package.json we will mention dependencies -> it will talk to node.js and bring out the dependencies. 
+https://www.npmjs.com/package/protractor
+2. npm _. it is a node package manager which is used for accessing node CLI , node registry .
+3. Node registry -> this is a cloud node repo where all the node modules are housed in. The softwares which is built through node.js are housed in. examples  protractor , appium etc 
+
+How to create package.json
+i. go to cmd and navigate to the project
+   C:\Users\USER\eclipse-workspaceP1\ProtractorTutorial
+ii. npm init -f //initialize package.json 
+iii. Stop selenium server(if it is running) & npm uninstall -g protractor
+     protractor --version   //no protractor found
+iv. "dependencies" : {
+	"protractor":"^7.0.0"
+},
+v. build the project by following -
+   C:\Users\USER\eclipse-workspaceP1\ProtractorTutorial
+   npm install
+That's it, dependencies will be downloaded in yr dev workspace
+refresh the project and we will see the 'node_modules' folder gets imported . 
+vi. Now we have to configure the ru configurations < TestRunner by following -
+ In the mainfile section configure the cli.js :
+ ${workspace_loc:/ProtractorTutorial/node_modules/protractor/built/cli.js}
+vii.  Now we have to customize the 'scripts' attributes in the package.json 
+   "scripts": {
+      
+         "webdriver-update" : "%INIT_CWD%/node_modules/.bin/webdriver-manager update",
+         "webdriver-start" : "%INIT_CWD%/node_modules/.bin/webdriver-manager start",
+         "protractor" : "%INIT_CWD%/node_modules/.bin/protractor Configuration.js",
+         "start" : "npm run webdriver-update &&npm run webdriver-start"
+  }
+Now whenever we want to start the selenium server we will use
+cd C:\Users\USER\eclipse-workspaceP1\ProtractorTutorial
+npm run start
+whenever we need to trigger automation -
+npm run protractor
+
+***********************
+### JASMINE DATAPROVIDER ###
+1. module.exports =  {datadrive};
+console.log(datadrive.firstinput);
+console.log(datadrive.result);
+
+Case1: javaobjectspec.js
+var Student = {
+    name : "ABC",
+    age : 18,
+    dept : "CSE",
+    score : 90
+};
+module.exports = {Student};
+
+calling the above student object from another .js file
+create a require block and catch object 
+ var d = require("./Data.js");
+ d.Student.name // ABC
+ 
+Case2: The concept is like this : we jave to wrap the testcases (it block)
+inside jasmine-dataprovider block(using block). so based on the datasets we define in dataprovider, the testcase will be executed by those number of times.
+ i. we need to use 'using' block as following
+    var d = require("./Data.js");   //importing the Data.js object in d variable
+    using(d.Datadrive, function(data, description)
+	//Datadrive -> the parent object under all the subset of objects there in data.js file
+	//function(data , description) -> //data stores actual data example{firstnumer = 1,
+	second number = 2}
+                                   -> description -> subset object name i.e. datadrivefirst , this indicates count 
+example:
+Data.js
+module.exports = {
+	Datadrive : {
+		datadrivefirst : {
+			firstinput : "2",
+			secondinput : "3",
+			result : "5"
+		},
+
+		datadrivesecond : {
+			firstinput : "7",
+			secondinput : "3",
+			result : "10"
+		},
+
+		datadrivethird : {
+			firstinput : "21",
+			secondinput : "3",
+			result : "24"
+		}
+
+	}
+
+}
+//spec.js
+	var obj = require("./JSObjectDemo.js");
+	var d = require("./Data.js");
+	var using = require('jasmine-data-provider');  //this is the main stuff
+using(d.Datadrive, function(data, description) {
+
+		it('Testing Calculator functionalities', function() {
+			//write your real proractor code 
+
+			obj.firstinput.sendKeys(data.firstinput);
+			obj.secondinput.sendKeys(data.secondinput);
+			obj.clickbtn.click();
+
+			//jasmine takes care of resolving promise 
+			var a = obj.result.getText();
+			expect(a).toBe(data.result);
+
+		});
+
+	});
+### Protractor Group Suites ###
+If we want to make a certain number of testCases as 'Regression' or 'Smoke' we can implement the concept of 'Suite' inside the configuration.js file
+PFB the steps --
+1. Add the bewlo line inside the configuration file
+   suites :
+		{
+		   Smoke: ['ChainLocators.js','Dropdown.js'],
+		   Regression: 'ElementBasics.js'
+		
+		}
+2. Customize the package.json in such a way that it have the knowledge of executing the specific regression / smoke from terminal
+   "SmokeSuite" : "%INIT_CWD%/node_modules/.bin/protractor Configuration.js --suite Smoke"
+   finally: npm run SmokeSuite //only ChainLocators.js & Dropdown.js specs will be executed     		
+
+
+  
+
+
+
+
+	        	
+
+	        	
