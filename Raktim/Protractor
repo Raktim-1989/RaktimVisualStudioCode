@@ -54,7 +54,7 @@ ii. Resolved
 iii. Rejected
 3. In Synchronous , we will move to next step only if the promise for current step is either Resolved Or Rejected . //like selenium with Java /python
 4. In Asynchronous: WebDriver JS will move to next step even if the promise of current step is pending . 
-5. To avoid the Asynchronous nature, protractor team came up with some API where 90% of thier API (acrtions performed on browsers) will not move to the next stpe until the promise of the current step is Resolved. 
+5. To avoid the Asynchronous nature, protractor team came up with some API where 90% of thier API (actions performed on browsers) will not move to the next stpe until the promise of the current step is Resolved. 
 6. The 10% where Protractor can't support promise resolving : If we want to retrieve anything from browser - then that particular functionality related methods have not support of promise resolving . 
 
 To avoid the above 10% issue do the following --
@@ -351,11 +351,11 @@ iv. "dependencies" : {
 	"protractor":"^7.0.0"
 },
 v. build the project by following -
-   C:\Users\USER\eclipse-workspaceP1\ProtractorTutorial
+   cd C:\Users\USER\eclipse-workspaceP1\ProtractorTutorial
    npm install
 That's it, dependencies will be downloaded in yr dev workspace
 refresh the project and we will see the 'node_modules' folder gets imported . 
-vi. Now we have to configure the ru configurations < TestRunner by following -
+vi. Now we have to configure the run configurations < TestRunner by following -
  In the mainfile section configure the cli.js :
  ${workspace_loc:/ProtractorTutorial/node_modules/protractor/built/cli.js}
 vii.  Now we have to customize the 'scripts' attributes in the package.json 
@@ -449,7 +449,7 @@ using(d.Datadrive, function(data, description) {
 ### Protractor Group Suites ###
 If we want to make a certain number of testCases as 'Regression' or 'Smoke' we can implement the concept of 'Suite' inside the configuration.js file
 PFB the steps --
-1. Add the bewlo line inside the configuration file
+1. Add the below line inside the configuration file
    suites :
 		{
 		   Smoke: ['ChainLocators.js','Dropdown.js'],

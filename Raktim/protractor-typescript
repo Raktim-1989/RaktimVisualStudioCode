@@ -1,0 +1,318 @@
+### Protractor TypeScript ###
+1. Install dependencies needed for Protractor TypeScript framework
+2. Build the basic Protractor TypeScript project with .spec & .config files
+3. Minor changes needed to concert the existing Protractor javascript
+   framework into Protractor TypeScript framework.
+4. How proractor works in back end for typescript ?
+5. TypeScript configuration file importance in compiling .
+All set !! Run any protractor javascript program using typescript.
+6. Importance of async/wait for synchronization
+7. Build page objects files to seperate web objects from .spec files.
+8. Importance of package.json to manage dependencies & building scripts. 
+
+### Sample project to refer : ambient typings concept###
+https://github.com/angular/protractor/tree/5.4.1/exampleTypescript
+
+package.json 
+
+### dependencies ###
+"dependencies": {
+    "@types/jasmine": "2.5.41",
+    "@types/jasminewd2": "^2.0.0",
+    "jasmine": "^2.4.1",
+    "protractor": "file:../",
+    "typescript": "~2.0.0"
+  }
+  "devDependencies": {
+    "@types/jasminewd2": "^2.0.0",
+    "ts-node": "^3.0.2"
+  }
+"@types/jasmine": "2.5.41",
+"@types/jasminewd2": "^2.0.0"
+"scripts": {
+      
+         "webdriver-update" : "%INIT_CWD%/node_modules/.bin/webdriver-manager update",
+         "webdriver-start" : "%INIT_CWD%/node_modules/.bin/webdriver-manager start",
+         "protractor" : "%INIT_CWD%/node_modules/.bin/protractor Configuration.js",
+         
+   }
+
+By default Jasmine & nodes can't recognize typescript, so we have to download the above 2 'ambient typings' .make sure these ambient types including jasmine, jasmine-webdriver-2 and node !!
+The importance of these 'ambient typings' is they will help to convert the jasmine JS est into the corresponding typescript tests. 
+
+command: npm install --save-dev @types/jasmine @types/jasminewd2
+
+### difference between '~ (tilde)' & '^(caret)' characters in dependency versions
+
+The tilde (~) character matches the most recent minor versions(middle number)
+example: ~1.2.3 will match all 1.2.x versions but will miss 1.3.0 version
+On the other hand, the caret(^) matches the most recent major versions(first number)
+example: ^1.2.3 will match any 1.x.x. version including 1.3.0 but will miss 2.0.0 version
+
+### changes need to make in .spec file to make it typescript compatbile ###
+
+import {browser} from "protractor";
+import {element, by} from "protractor";
+//import the above global variables from protractor so that when we create spec.ts file and develop our scripts , protractor can recognize these global variables 
+
+### changes needed in configuration file to be typescript compatible ###
+1. import {Config} from "protractor"; 
+2. // seleniumAddress: 'http://localhost:4444/wd/hub',
+directConnect: true,
+
+we are commenting out the seleniumAddress URL so that it can trigger to 
+any direct connect
+3. export let config:Config = {
+}
+
+### importance of Typescript configuration file ###
+1. Typescript configuration file helps the .ts file to convert into .js file after compiling
+2. The reason is , protractor only recognizes the .js file for triggering tests
+but typescript is mlore powerful that javascript that' why we have to use typescript 
+To make protractor understand the typescript, we we will use 'tsconfig.json' compiler in our project which will conver the .ts file into .js file after compiling . 
+3. To create the tsconfig.json file, we will use the following command -
+   tsc --init   //this will create the tsconfig.json file in yr project
+   pre-requisite: Typescript should be installed globally 
+                  npm install -g typescript 
+4. Configure the tsconfig.json as the following -
+{
+     "compilerOptions": 
+       {
+       "target": "es6",  
+       "module": "commonjs",   
+       "moduleResolution": "node",
+       "inlineSourceMap": true,
+       "declaration": false,
+       "noImplicitAny": false,  
+       "removeComments": false,    
+       "sourceMap": false,
+       "outDir": "JSFiles",
+       "esModuleInterop": true,
+       "skipLibCheck": true 
+      }  
+   ,
+   "exclude": [
+    "node_modules"
+  ]
+}  
+
+Now if we use command : tsc 
+  it will compile all .ts files in to .js files.
+  That's it !!!
+
+  Triggering tests :
+   npm run webdriver-start
+   npm run protractor
+
+
+### Running the test using protractor ###
+   npm run webdriver-start
+   npm run protractor
+
+### importance of async/await for synchronization ###
+In current ES6 engine, protractor have the ability of 99% to handle primise resolved
+but in future ES7 engine, it will remove this capability. for that case, we have to implement the concept of async/await
+//in typescript we already have this feature , but in js it will implement till ES7 
+So we have to implement the concept of sync/await
+1. we can replace the fucntion keyowrd with => operator.
+2. replace function() with 'async()=>'  & put 'await' keyword beside codes
+   it('Locators' , async()=>
+   {
+            await element(by.model("first")).sendKeys("4");
+	        await element(by.model("second")).sendKeys("10");
+	        await element(by.id("gobutton")).click();	
+            
+   }    
+
+### Page object mechanism ###
+1. create a page class by page.ts and construct like following 
+   it will be having one constructor +  objects with return type 'ElementFinder' & 'ElementArrayFinder'
+2. export the class so that we can import it from anotehr class and creating objectsd as well 
+import { element, ElementFinder, by, ElementArrayFinder } from "protractor";
+example ---
+export class calculator 
+{
+    firsteditbox : ElementFinder;
+    secondeditbox : ElementFinder;
+    go : ElementFinder;
+    getresult : ElementArrayFinder;
+
+    constructor()
+    {
+        this.firsteditbox = element(by.model("first"));
+        this.secondeditbox = element(by.model("second"));
+        this.go = element(by.id("gobutton"));
+        this.getresult = element.all(by.repeater("result in memory"))
+    }
+    
+} 
+
+3. In the testspec.ts file change the mechanism --
+   let obj = new calculator();
+	 
+   await obj.firsteditbox.sendKeys("3");
+   await obj.secondeditbox.sendKeys("10");
+   await obj.go.click();
+
+4. when we will compile the .ts files with 'tsc' commands all the .ts files will be compiled to .js file 
+
+### scripts tag in package.json ###
+1. We will configure the package.json in the following way
+Way1: Under the scripts tag , we will configure like following 
+      "scripts": {
+         "pretest": "tsc",
+         "test" : "protractor Configuration.js",
+         "webdriver-update" : "%INIT_CWD%/node_modules/.bin/webdriver-manager update",
+         "webdriver-start" : "%INIT_CWD%/node_modules/.bin/webdriver-manager start",
+         "protractor" : "%INIT_CWD%/node_modules/.bin/protractor/built/cli.js"
+  }
+  "command: npm run test  //will do everything at a single go !!"
+//once we run the above command, at first 'pretest' will be invoked and the compilation happens 'tsc'
+after that 'test' script will be invoked. 
+When the test script is invoked, it first checks the 'protractor' variable which is set as -> "protractor" : "%INIT_CWD%/node_modules/.bin/protractor/built/cli.js"
+it means we can run this command from our project,doesn't matter whether protractor is not globally installed
+
+Way2: Under the scripts tag , we will configure like following 
+      "scripts": {
+         "webdriver-update" : "%INIT_CWD%/node_modules/.bin/webdriver-manager update",
+         "webdriver-start" : "%INIT_CWD%/node_modules/.bin/webdriver-manager start",
+         "protractor" : "%INIT_CWD%/node_modules/.bin/protractor Configuration.js"
+  }
+Command : 
+        tsc        //it compiles the .ts files
+        npm run protractor   //esecute the scripts 
+**************************************************************
+CUCUMBER FRAMEWORK
+
+1. dependencies :
+   "protractor-cucumber-framework" : "^6.1.1",
+    "cucumber" : "^5.1.0",
+    "@types/cucumber" : "^4.0.4"
+2. Add the following in config.ts file
+   cucumberconfig.ts 
+   exports.config = 
+   {
+       framework: 'custom',
+       // path relative to the current config file
+       frameworkPath: require.resolve('protractor-cucumber-framework'),
+       specs: ['./features/demo.feature'],
+       cucumberOpts: {
+        // require step definitions
+        require: [
+          './stepDefinitions/*.js' 
+         
+          ]
+      }
+   }
+3. Create a feature file and configure the scenarios/ feature.
+4. Integrate the .feature file with stepDefintions file 
+   stepDefinitions -> steps.ts 
+5. Trigerring tests from terminal -
+   In package.json configure the cucumberTest script as following -
+   "protractor" : "%INIT_CWD%/node_modules/.bin/protractor/built/cli.js",
+   "cucumbertest" : "protractor cucumberconfig.js"  
+   tsc //compilation
+   npm run cucumbertest
+6. Assertions using Chai 
+   Cucumber don't support jasmine assertions, we have another alternative 'chai' assertions
+   dependencies:
+   "chai" : "^4.2.0",
+    "chai-as-promised" : "^7.1.1"
+chai assertions :
+import {chai} from "chai";
+Expect
+var expect = chai.expect;
+i. expect(foo).to.be.a('string');
+ii. expect(foo).to.equal('bar');
+iii. expect(foo).to.have.lengthOf(3);
+iv. expect(tea).to.have.property('flavors')
+  .with.lengthOf(3);               
+
+************************************
+HOW TO HANDLE THE FOLLOWING ERROR
+tsc : File C:\Users\USER\AppData\Roaming\npm\tsc.ps1 cannot be loaded because running scripts is        
+disabled on this system
+
+Open powershell with admin mode and do following 3 steps --
+Step1: set-ExecutionPolicy RemoteSigned -Scope CurrentUser 
+Step2: Get-ExecutionPolicy
+Step3: Get-ExecutionPolicy -list  
+
+*********************************
+TAGGING MECHANISM 
+
+1. In config.ts file 
+   tags: "@Angulartesting",
+2. in feature file add 
+   @Angulartesting
+   Scenario: login
+
+**********************
+HOOKS 
+
+Hooks is applicable for tags 
+1. if we don't put any tags , hook will execute before / after all scenarios 
+2. Before()  & after() 
+3. Before({tags : "@calculatortesting"} ,function()
+{
+     //this hook will execute before foo tags
+     browser.driver.manage().window().maximize();
+
+} );
+
+import {After ,Before } from "cucumber";
+import { browser } from "protractor";
+********************
+
+CUCUMBER HTML REPORTING
+
+1. Add the folloiwng under cucumberOpts tag
+
+cucumberOpts : {
+    format: 'json:./cucumberreport.json' 
+}
+
+2. An output json file will be generated in the project folder
+3. Implement 'onComplete()' option to give knowledge to protractor , once execution done , fetch the report
+add the following codes in configcucumber.ts -
+'use strict'; //on top of the configcucumber.ts file 
+onComplete: ()=>
+        {
+         var reporter = require('cucumber-html-reporter')
+          var options = {
+                  theme: 'bootstrap',
+                  jsonFile: './cucumberreport.json',
+                  output: './results.html',
+                  reportSuiteAsScenarios: true,
+                  scenarioTimestamp: true,
+                  launchReport: true,
+                  metadata: {
+                      "App Version":"0.3.2",
+                      "Test Environment": "STAGING",
+                      "Browser": "Chrome  54.0.2840.98",
+                      "Platform": "Windows 10",
+                      "Parallel": "Scenarios",
+                      "Executed": "Remote"
+                  },
+                  
+              };
+          
+              reporter.generate(options);
+        }
+
+**********************
+SCREENSHOT ATTACHED WITH FAILED SCENARIO
+
+In the hooks.ts file create the following block
+After(async function (scenario )
+{
+       if(scenario.result.status === Status.FAILED)
+       {
+           //write a code to take screenshot
+           const screenshot = await browser.takeScreenshot();
+           this.attach(screenshot , "image/png"); 
+       }
+});
+
+*******************
+

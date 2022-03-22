@@ -212,4 +212,12 @@ Approach:
          viii. Worked on Automation on IOS advanced Gestures functionalities with Appium.
          ix. Worked on IOS real device automation testing.   
 
+### Protractor ###
+1. Automating Angular JS applications by using Protractor, Jasmine using Java script and created specs for various functional scenarios.
+2. Developing .spec and .config files for various scenarios in Protractor/Jasmine using “describe, it and expect”
+3. Developed a protractor Automation framework by integrating several components like .spec.js , .config.js , testRunner configuraion, package.json ,handling promises and resolving asynchonous issues , integrating jasmine data provider , page object mechanism to drive the objects , generating client reports & tagging for protractor tests.
+4. Integrated the protractor tests with CICD tool like Jenkins. 
+
+SDET (Java Selenium and Protractor Automation developer)
+
 

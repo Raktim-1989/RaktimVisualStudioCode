@@ -1,0 +1,229 @@
+/*1. It gives additional features to javascript on OOPS concept which makes code 
+   more reliable.  //developed by microsoft
+2. Install typescript: npm install - g typescript
+3. Let & Const keyword: These keywords are available till JS ES5 engine
+4. typescript have the capability to convert the ts into js.but when it converts 
+   it makes sure our browser / protractor understands. 
+5. diff between 'var' & 'let'*/
+
+var s = 5;   //it has no restrictions
+
+for (var i = 0; i < 9; i++) {
+    setTimeout(function () {
+        console.log(i);
+    }, 100 * i);
+}
+//in o/p we see 5 , 5 ,5 ,5 5 which is not correct. The reason is there is no restriction of var 
+//and as js is ascynchronous it is displaying 9 every time
+//to remove this we will use 'let' keyword
+for (let i = 0; i < 9; i++) {
+    setTimeout(function () {
+        console.log(i);
+    }, 100 * i);
+}
+//o/p 0 ,1 , 2 , 3 , 4 , 5 ....8
+//let keyword works on block level , it means when i carry the value 0 
+//it doesnt know any other value. afer completing its action the  it goes for 2nd value
+/*
+6. We have to compile typescript all the time with 
+   tsc filename.ts 
+   It will generate a.js file with the same name
+then -> node filename.js // will execute the script 
+
+7. Const keyword: cant be reasigned
+const b = 10;
+   //b = 11;  compile error since it cant be reassigned*/
+
+/*
+       ---------------- DATA TYPES IN TYPESCRIPT ----------------------
+       1. In javascript we can declare any variable as var x = 10;
+          x = "Raktim" ; //this is a valid declartion 
+          In Typescript we cant do that as it will throw type discrepancy error
+        var x = 10;
+        x = "raktim";  //compile error
+       2. Valid datatype declaration in ts -> let x:string = "raktim";
+                                              let c:number = 4;
+       3. let flag:boolean = false;   
+        it means we can define rule in typescripts
+       
+*/ 
+   
+
+/*
+        ------------- ARRAYS -------------
+
+        let list:Array<number> = [1,2,34,5];
+        let dynamic:any  //is we want to retrieve something from UI we can use 'any'
+        dynamic = 3;
+        dynamic = "hello" ; //valid 
+
+
+
+*/
+
+/*
+       ------------- CLASSES -------------
+       1. classes combines methods, properties , constructors 
+       2. If we declare variables inside the class that teats as properties
+       3. let username:String;  -> compile error since it will treat as vairables. 
+       4. we can't declare variables inside class
+      
+    username:String ;
+    password:String;
+    SSN:number;
+
+    getUserName()
+    {
+        return this.username;  //this refers to current class properties
+
+
+    }
+
+    setUserName(username:string)
+    {
+        this.username = username;
+    }
+
+    getssn()
+    {
+        return this.SSN;
+    }
+    
+}
+//we are creating object outside the class 
+
+let obj = new classDemo();
+obj.setUserName("raktim");
+console.log(obj.getUserName());   
+
+*/
+
+/*
+          --------------- CONSTRUCTORS ------------------
+          //classes combines methods, properties , constructors 
+class constructorTests
+{ 
+    username:String ;
+    password:String;
+    SSN:number;
+
+    constructor(ssn:number)
+    {
+        this.SSN = ssn;
+    }
+
+    getUserName()
+    {
+        return this.username;  //this refers to current class properties
+
+
+    }
+
+    setUserName(username:string)
+    {
+        this.username = username;
+    }
+
+    getssn()
+    {
+        return this.SSN;
+    }
+
+    
+}
+let obj1 = new constructorTests(123);
+obj1.setUserName("raktim");
+console.log(obj1.getUserName());
+console.log(obj1.getssn());
+
+*/
+
+/*
+ ------------ EXPORT IMPORT CONCEPT IN JAVASCRIPT ----------------
+ 1. When we need to use any class, methods, variables into other classes
+    we have to use export and import concept .
+ 2. example : 
+    constructortest.ts 
+    //classes combines methods, properties , constructors
+export module App{ 
+export  class constructorTests
+{
+    username:String ;
+    password:String;
+    SSN:number;
+
+    constructor(ssn:number)
+    {
+        this.SSN = ssn;
+    }
+
+    getUserName()
+    {
+        return this.username;  //this refers to current class properties
+
+
+    }
+
+    setUserName(username:string)
+    {
+        this.username = username;
+    }
+
+    getssn()
+    {
+        return this.SSN;
+    }
+
+    
+}
+}
+//if we see the above code, we are binding the entire class in a module. 
+we are exporting this class so that , we can import in other class
+Below is the 'access.ts' class from where we are creating object of the above class
+
+import {App} from './constructorstest';
+let cd = new App.constructorTests(123);
+cd.setUserName("raktim");
+console.log(cd.getUserName());
+console.log(cd.getssn());  
+
+//firstly we are importing the App module from the .ts file 
+tsc access.ts
+node access.js //output
+
+*/
+
+/*
+  -----------------------  INTERFACES --------------------------
+  It's a contract between client & service provider
+  interface userDetails
+  {
+       username : String,
+       password : String,
+       SSN : Number
+  }
+  function validUser(bankingCustomer : userDetails)
+  {
+         console.log(bankingCustomer.username);  //123
+         console.log(bankingCustomer.password);  //*** 
+  }
+
+  let hdfcUser =
+  {
+      "username" : 123,
+      "password" : ***,
+      "SSN"   : 12345
+  }
+
+  validUser(hdfcUser);   //at first it will check the service contract of validUser 
+                          whether all attributes matches as per contract
+Note: If we want to make any fiedls optional we will metion 
+        interface userDetails
+  {
+       username : String,
+       password : String,
+       SSN ?: Number
+  }
+*/
+
+
