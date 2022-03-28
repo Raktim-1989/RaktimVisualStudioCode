@@ -7,7 +7,7 @@
    as protractor. 
 5. It uses JavaScript as core language, it uses typescript as well.
 6. JavaScript + few additional features(OOPS) = TypeScript
-7. Protractor API remains same in syntaxes for both Javascript &       typescript,and it is originally built in JS. Differences arises when we develop test framework in protractor. 
+7. Protractor API remains same in syntaxes for both Javascript & typescript,and it is originally built in JS. Differences arises when we develop test framework in protractor. 
 8. Why Node.js ?
    NPM -> Node Package Manager, the softwares which has a dependency on Nodes are kept in a repository. It's like Maven where depeneencies in a central maven repo. To download protractor API from node repo, we need 'npm' command to connect to Node repository and download packages !!
 9. npm install -g protractor
@@ -329,7 +329,7 @@ we will mention this tag in the configuration.js file . it means before executin
 we can mention lots of things under this onPrepare block
  i. We can mention report details under this block
  ii. for non-angular websites, we will mention browser.waitForAngularEnabled(false);
- iii. maximize browsers //browser.driver.manage().window().maximize();
+ iii. maximize browsers //browser.driver.manage().window().maximize();	
 
 ### Understand Package.json ###
 When we built any project using node.js , this package.json is mandatory
@@ -453,7 +453,7 @@ PFB the steps --
    suites :
 		{
 		   Smoke: ['ChainLocators.js','Dropdown.js'],
-		   Regression: 'ElementBasics.js'
+		   Regression: ['ElementBasics.js']
 		
 		}
 2. Customize the package.json in such a way that it have the knowledge of executing the specific regression / smoke from terminal

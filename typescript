@@ -6,6 +6,45 @@
    it makes sure our browser / protractor understands. 
 5. diff between 'var' & 'let'*/
 
+/*
+ ------------    RULES ON TYPESCRIPT    -----------------
+ 1. WHEN WE DECLARE VARIABLE INSIDE CLASS, WE SHOULD NOT USE KEWORDS LIKE LET / VAR
+    WE JUST NEED TO SPECIFY LIKE NAME : string , ID : number etc
+ 2. WHEN WE DECLARE FUNCTIONS INSIDE CLASS, WE DON'T NEED TO MENTION KEYWORD function 
+    WE CAN DELCARE methodName(){}
+ 3. WE CAN'T DECLARE DUPLICATE VARIABLES INSIDE THE SAME PROJECT OF ANY .ts file. 
+        
+*/
+
+/*
+------------INSTALLATION---------------
+Step 1 : Download and install Node js
+node -v
+npm -v
+Step 2 : Install TypeScript
+npm install -g typescript   //globally
+tsc -v
+Step 3 : Download IDE - Visual Studio Code
+Step 4 : Add support for javascript, typescript and code runner
+Step 5 : Create a new folder and open in VS Code
+Step 6 : Create javascript (.js) and (.ts) files
+
+To add TypeScript in a local folder
+Step 1 : Download and install Node js
+node -v
+npm -v
+Step 2 : Download IDE - Visual Studio Code
+Step 3 : Create a new folder and open in VS Code
+Step 4 : Open VS Code Terminal and run commands
+npm init -y
+npm install typescript 
+Step 5 : Check typescript is installed locally     npx tsc -v
+
+#TypeScriptBeginnerTutorials
+
+
+
+*/
 var s = 5;   //it has no restrictions
 
 for (var i = 0; i < 9; i++) {
@@ -58,6 +97,67 @@ const b = 10;
         dynamic = "hello" ; //valid 
 
 
+
+*/
+
+/*
+         --------------- TUPPLES -----------
+           1. At times, there might be a need to store a collection of values 
+           of varied types. Arrays will not serve this purpose. 
+           TypeScript gives us a data type called tuple that helps to
+            achieve such a purpose.
+
+           2. let my_tupple = [12, "hello"];
+              console.log(my_tupple[0]); 
+       //push() & pop() operation
+           let my_tupple = [12, "hello"];
+           my_tupple.push(24);
+           my_tupple.push(null);
+           console.log(my_tupple[0]);
+
+            console.log(my_tupple.length);
+              // we can't pop null
+              console.log(my_tupple.pop() +  ' popped from tupple');
+*/
+
+
+/*
+            ------------  UNION ---------------
+TypeScript 1.4 gives programs the ability to combine one or two types.
+Union types are a powerful way to express a value that 
+can be one of the several types. Two or more data types are
+combined using the pipe symbol (|) to denote a Union Type
+
+let union :string | string[];
+union = "raktim";
+console.log(union);
+
+union = ["rahul" , "jackson" , "arijit"];
+for(let c in union)
+{
+    console.log(union[c]);
+}
+
+//union type and function parameter
+function disp(name: string | string[])
+{
+       if(typeof name == 'string')
+       {
+              console.log(name)
+       } 
+       
+       else
+       {
+                for(var i = 0;i<name.length;i++)
+                {
+                          console.log(name[i]);
+                }
+       }
+}
+
+disp("raktim");
+console.log("*************************")
+disp(["ORACLE" , "CTS", "IBM" , "TCS"]);
 
 */
 
@@ -226,4 +326,22 @@ Note: If we want to make any fiedls optional we will metion
   }
 */
 
+/*
+
+------------   OBJECTS ---------------------
+let person1 = 
+{ 
+       firstname : "tom",
+       lastname : "sarkar"
+}
+
+let invoke = function(obj:{firstname:string , lastname: string})
+{
+      console.log(obj.firstname);
+}
+
+invoke(person1);    //tom
+
+
+*/
 

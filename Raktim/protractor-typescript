@@ -1,7 +1,7 @@
 ### Protractor TypeScript ###
 1. Install dependencies needed for Protractor TypeScript framework
 2. Build the basic Protractor TypeScript project with .spec & .config files
-3. Minor changes needed to concert the existing Protractor javascript
+3. Minor changes needed to convert the existing Protractor javascript
    framework into Protractor TypeScript framework.
 4. How proractor works in back end for typescript ?
 5. TypeScript configuration file importance in compiling .
@@ -69,7 +69,7 @@ any direct connect
 1. Typescript configuration file helps the .ts file to convert into .js file after compiling
 2. The reason is , protractor only recognizes the .js file for triggering tests
 but typescript is mlore powerful that javascript that' why we have to use typescript 
-To make protractor understand the typescript, we we will use 'tsconfig.json' compiler in our project which will conver the .ts file into .js file after compiling . 
+To make protractor understand the typescript, we we will use 'tsconfig.json' compiler in our project which will convert the .ts file into .js file after compiling . 
 3. To create the tsconfig.json file, we will use the following command -
    tsc --init   //this will create the tsconfig.json file in yr project
    pre-requisite: Typescript should be installed globally 
@@ -113,7 +113,7 @@ Now if we use command : tsc
 In current ES6 engine, protractor have the ability of 99% to handle primise resolved
 but in future ES7 engine, it will remove this capability. for that case, we have to implement the concept of async/await
 //in typescript we already have this feature , but in js it will implement till ES7 
-So we have to implement the concept of sync/await
+So we have to implement the concept of async/await
 1. we can replace the fucntion keyowrd with => operator.
 2. replace function() with 'async()=>'  & put 'await' keyword beside codes
    it('Locators' , async()=>

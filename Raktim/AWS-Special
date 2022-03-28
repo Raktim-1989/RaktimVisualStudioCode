@@ -1,0 +1,67 @@
+Why AWS Cloud ?!!
+1. Capital expenditure due to following 
+   server - 50 servers
+   license :
+   networking
+   routing
+   switch
+   gateway
+   cabling
+   AC
+   Employee
+   maintainence
+2. to complete configuration of 1 server, it takes 10 days, to complete 50 servers , it will take 
+   50 days  // coset would be really high
+3. Solution : AWS Cloud / Azure from MS  / Alibaba / GCP
+4. it gives 3 components
+   i. IAAS : Infrastructure as service
+   II. PAAS : platform as service
+   III.SAAS : software as service
+5. Region : 24 regions where data centre hosted by AWS.  
+6. AZ :    Availibiliy Zone comes under Region. 
+7. Support < new case < type: Billing , Category: Dispute a charge < subject:request 
+    for waive off my bill !  <contact : phone < submit 
+
+    **********************
+    wrishi.d.fire@gmail.com
+    Rishi#2022
+    
+    EC2
+    1st part : 
+    1. Click EC2 < RUNNING INSTANCE < LAUNCH INSTANCE 
+    2. select any linux free tier server : we will be heading towards STEP2
+       NEXT
+    3. STEP3: Add Storage section
+    4. STEP4: Add Tags 
+              Key; Name   Value: Linux server
+    5. STEP5: Configure security group
+              Type: SSH , Source; Anywhere
+    6. Review and Launch & then LAUNCH 
+    7. Select an existing key pair: 
+       Create a new keyPair: name linux 
+       download the keypair (.pem file)
+    8. Launch Instances 
+    9. That's it , we can see the linux server is running in 'Instances' section
+
+    Now 2nd part:
+    We have to access linux servers via putty & putty gen and keep in local. So download Putty  & puttygen .exe file from 
+    https://www.puttygen.com/download-putty
+
+    3rdpart:
+    1. Now navigate back into AWS Console and open the runing instanxce (verify the status should be 2/2 passed)
+    2. Copy the 'Public IPV4 address' 
+    3. Opne Putty gen < click on Load < select 'all fiels from popup < select .pem file < browse the linux123.pem file < save as private key < save the file.ppk
+    4. Open putty 
+       paste the PV4 address in HostName
+       open SSH from left hand panel
+       click Auth
+       browse the .ppk file 
+       click ACCEPT from securirty alert
+       That's it !! linux machine will be launched 
+    5. we can change the font settings & color settings from change settings < appearance < change font < apply >
+
+    Once lab is done , go to the AWS Console < Actions Stop / Terminate the instance 
+
+
+
+

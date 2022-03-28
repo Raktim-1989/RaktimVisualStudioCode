@@ -1,0 +1,363 @@
+### Ansible Configuration Management ###
+1. Create 1 Ansible server & 2 nodes in AWS 
+2. In the Configure Instance Details section < Advanced details < User data 
+   #!/bin/bash
+   sudo su
+   yum update -y  
+3. Launch the instances from putty gen & putty
+4. chnage the name of the servers from terminal
+   Change settings < behavior < window-title : ansible server
+5. linux basics: Enter the following: q! //come out of vi editor
+### After all 3 servers ready start following ###
+1.  Download the below package in Ansible Server machine-
+    //In Ansible server 
+    sudo su 
+    wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+2. ls //epel-release-latest-7.noarch.rpm
+3. install the package yum install epel-release-latest-7.noarch.rpm
+4. yum update -y 
+5. yum install git python python-level python-pip openssl ansible -y
+6. check anisble installed or not 1st
+   ansible --version
+7. config file path : config file = /etc/ansible/ansible.cfg
+8. Navigate to the hosts file by the following 
+   i.vi /etc/ansible/hosts
+   ii.create a group i.e. [demo] under EX 1: ungrouped hosts, specxify any group headers
+   iii. copy the private IPs from Node1 & Node2 and paste it under demo group
+       it means whenever we will update any file in the node servers, we will update it in the demo group so that both node1 & node2 picks it up
+       save the file [esc / shift+: / wq]
+9. Navigate to the config file by the following -
+   i. vi /etc/ansible/ansible.cfg
+   ii. Uncomment the folloiwng -
+       inventory   = /etc/ansible/hosts
+       sudo_user   = root
+   iii. Now come out of the file by saving it
+10. Add a new user so that we can give him a sudo access afterwards 
+    i. adduser ansible  //ansible is username
+    ii. passwd ansible
+        it will ask to provide password , hit ENTER
+11. Now go to Node1 and do the following -
+i. sudo su
+ii. adduser ansible
+iii. passwd ansible 
+12. Now do the same for Node2 as well. 
+13. Now switch to 'ansible' user for all 3 servers 
+    su - ansible
+14. Now go to the ansible server machine :
+    sudo yum install httpd -y   //this will throw error because we have to give the 'ansibleuser' the sudo access 
+     do the following ---
+     i. exit //come out from ansible user 
+     ii. enter the command 'visudo'
+         under the section ' allow root to run any commands anywhere ' enter the following command   
+         ansible ALL=(ALL) NOPASSWD: ALL
+     iii. do the above in 3 servers 
+15. Now go to the 'ansible server' and do su - ansible // u will be working as ansible user now
+   Do the following -
+   sudo yum install httpd -y 
+   exit
+16. Estabslish connection between AnsibleServer & Nodes by following --
+Pre-requisite: update the ssh config file in all 3 servers as following 
+{
+i. Go to ansible server node and switch to sudo / root user - sudo su 
+ii. vi /etc/ssh/sshd_config and do the 3 changes 
+    uncomment the command : PermitRootLogin  yes
+    uncomment the command : PasswordAuthentication yes , this should be there under 'to disabled tunneled clear text passwords, change to here !
+    //comment the command : PasswordAuthentication No
+
+enter command for all 3 servers finnaly  -->   service sshd resart 
+Do the same for the other 2 nodes as well !!! and then establish the SSH as following -----
+}
+    i. Firstly , switch to ansible user by following in all 3 nodes 
+       su - ansible
+    ii.  ssh privateIPofNodes  //now we will be able to access the node1 from anisbleserver machine , this is the concept of ssh 
+    iii. touch file1 file2 //creating file from ansibleserver machine to node1
+    iv. go to node1 and check whether file, file2 created .  
+
+### Everytime we SSH to any node it is aksing password ###
+To overcome the above issue lets do following -
+Concept: we will generate a public key inside ansibleserver and will share the key inside the ndoes so taht each time it dont ask the passwords !!
+this is called trust relationship.
+it has to happen between root -> root && user -> user
+
+Steps
+Make sure we are wokring as a ansible user and all the users should in as 'ansibleuser' before attemprting the below process !!
+1. ssh-keygen  ENTER   ENTER //key will be generated
+2. ls -a   // .ssh folder will be generated
+3. cd .ssh/
+4. ls   
+id_rsa  id_rsa.pub  known_hosts
+5. Enter the following command so that nex time it dont ask for password when doing SSH from ansibleserver to node1
+ssh-copy-id ansible@172.31.43.63    
+6.  come out of .ssh   // cd ..
+7. ssh IPAddressofNode1 //ssh will be done without asking passwsord 
+
+Job done !!
+
+### Host Pattern ###
+1. 'all' pattern refers all the machines in an inventory
+2. ansible all --list-hosts //list down all the host machines in the inventory
+3. ansible <groupname>[0] --list-hosts //list down the first node of the group
+4. ansible <groupname>[2:5] --list-hosts //listdown the machines (3rd, 4th,5th,6th)
+<groupname>[-1]  list-hosts //list down the last node of the group
+
+for multiple groups
+groupname1 : groupname2
+demo[1:3] : devops[2] 
+
+### How SSH happens internally ###
+1. Client sends ssh connection request to server //ssh ipaddressofserver
+2. Server sends a random message to client
+3. Client encrypts the message with private key and sends it back
+   //ssh key-gen , two keys get generated , .rsa public & private 
+   //ssh copy-key serveruser@ipaddress
+4. Server decrypts the message using public key and on maatch authentication succeeds .
+
+### Ansible Commands ###
+1. adhoc commands // simple linux 
+   there is no idempotency in adhoc commands
+2. modules  //single work
+3. playbook //more than one module
+both are YAML //yet another markup language
+
+### Ad-hoc commands ###
+1. it can be run individually to perform wuick performs
+2. these commands are not used for configuration management & deployment 
+   because these commands are one of One time usage .
+3. ad-hoc commands use /usr/bin/ansible  command line tool to execute a single command
+ansible demo -a "ls"
+ansible demo[0] -a "touch file4"
+ansible demo -a "ls -al"
+ansible demo -a "sudo yum install httpd -y"
+which httpd //this command , we can run in all 3 machines,,,it will be installed !!
+ansible demo -a "sudo yum remove httpd -y"
+
+ansible all -a "touch raktimfile" // this will create file across all servers 
+
+### Ansible Modules ###
+Ansible ships with a number of modules called 'module library' that can be executed 
+directly or by playbook.
+where anisble modules are stored
+It stored in the default location of inventory file
+/etc/ansible/hosts
+Module commands:
+i. ansible demo -b -m yum -a "pkg = httpd state = present"
+//inside the arguement , this is a YAML syntax 
+//In YAML install = present | uninstall = absent | update = latest
+ii. ansible demo -b -m yum -a "pkg = httpd state = latest"         //yum module
+iii. ansible demo -b -m service -a "name = httpd state = started"  //service module
+iv. ansible demo -b -m user -a "name=raj"                         //user module
+v. ansible demo -b -m copy -a "src = file4 dest = /tmp"          //copy module
+   it will copy file into all nodes in the group         
+vi.ansible demo[-1] -b -m copy -a "src=copiedfilefromserverabs dest=/tmp"
+//it will copy into last node 
+vii. ansible demo -m setup //setup module
+    setup module satisfies the idempotency , that means it always checks whether that particulat module/software is already there in node machine or not. 
+### Ansible Playbooks ###
+1. Playbook in ansbile are written in YAML . 
+2. It is human readble data serialization language commonly used for configuration
+3. It is like a file where we write codes 
+4. Playbook consists of variables, tasks, handlers, files , roles.
+5. each playbook consists of one or more modules
+   module is a collection of configuration files.
+6. playbooks are divided into 3 sections --
+   Target Section : Defines the host against which the playbook task has to be executed
+   Variable Section : Defines variables
+   Task section : list of all modules that we need to run in order
+
+YAML 
+1. For ansible , every yaml file starts with a list.
+2. Each item in the list is a list of key-value pair.which is called dictionary.
+3. yaml files with '---'    extension .yml
+4. format key: value
+5. All members of the list must begin with same identation level starting with '-'
+   -Mango
+   -Apple
+   -Banana
+   -Guava
+6. dictionary represented by key: value
+   ---# details of customers
+   customer:
+     name: Rajput
+     job:  CTS
+     salary: 5k   
+
+demo yaml --
+--- # TargetPlaybook
+-hosts: demo
+ user: ansible
+ becomes: yes
+ connection: ssh
+ gather_facts: yes
+
+ansible-playbook target.yaml //playbook will be executed
+//rm -rf *  -- deleting all files
+
+task.yaml
+
+--- # TargetPlaybook
+- hosts: demo
+  user: ansible
+  become: yes
+  connection: ssh
+  tasks:
+    - name: install htpd on Linux
+      action: yum name=httpd state=installed
+
+ansible-playbook task.yml
+
+7. Variables
+   Ansible uses variables which are defined previously to enable more flexibility in playbooks and roles. 
+   This can be used to loop thorugh a set of values , access various info like
+   host name of a system and replace certain strings with specific values
+
+   Put variable section before tasks so that we can use its values later in tasks
+
+   var.yml
+   --- #My Variable playbook
+   - hosts: demo
+     user: ansible
+     become: yes
+     connection: ssh
+     vars:
+       pkgname: httpd
+     tasks:
+       - name: INSTALL HTTPD SERVER
+         action: yum name='{{pkgname}}' state=installed
+
+   ansible-playbook var.yml         
+
+8. Handlers
+   It is exactly as same as task, but will run when called by other task
+   its just like regualr ansible taks in playbooks, but only run if a task contains a 'notify' directive and indicates it changed something. 
+
+   //following in the 'tasks' section is the notify directive where we are asking ansible to go to handler & perform action
+
+   handlers.yml
+   --- # My Handler Playbook
+   - hosts: demo
+     user: ansible
+     become: yes
+     connection: ssh
+     vars:
+      pkgname: httpd  
+     tasks:
+      - name: INSTALL HTTPD SERVER IN CENTOS7
+        action: yum name='{{pkgname}}' state=installed
+        notify: RESTART HTTPD  
+     handlers:
+      - name: RESTART HTTPD
+        action: service name='{{pkgname}}' and state=restarted   
+
+ansible-playbook handlers.yml
+
+DryRun concept: ansible-playbook handlers.yml --check 
+//this is to check whether the playbook is written coretcly or not, it will show compile error
+//check whether httpd status active or not: sudo service httpd status 
+
+9. Loops
+   It will run the tasks / actions multiple times based on the conditions 
+
+   loops.yml
+   ---# MY LOOPS PLAYBOOK
+   - hosts: demo
+     user: ansible
+     become: yes
+     connection: ssh
+     tasks: 
+       - name= ADD LIST OF USERS IN MY NODES
+         user='{{item   }}' state=present
+         with_items:
+            -RaktimUser
+            -SarkarUser
+            -DevOpsUser
+            -AdminUser
+            -QAUser
+
+now verify in Node1& Node2 : cat /etc/passwd : users should be present !!
+
+### Conditions ###
+when we have different scenario, we put conditions accprding to the scenario.
+when statement:
+sometimes u want to skip a particular command , on a particular node.
+
+Note: For ubuntu & debian family we use apt-get install httpd -y
+      For redhat family we use yum install httpd -y 
+
+--- # MY CONDITION PLAYBOOK
+- hosts: demo
+  user: ansible
+  become: yes
+  connection: ssh
+  tasks:
+    - name: INSTALL APACHE ON DEBIAN
+      command: apt-get -y install apache2
+      when: ansible_os_family: "Debian"
+    - name: INSTALL APACHE ON REDHAT
+      command: yum -y install httpd
+      when: ansible_os_family: "RedHat"
+
+ansible-playbook condition.yml
+
+### Vault ###
+Ansible allows keeping sensitive data such as password,keys in encrypted files , 
+raher than a plaintext in yr playbook
+
+1. we can create the playbook in encrypted format during creation
+   ansible-vault create vault.yml
+   //it will ask for password during creation , it will always open with password afterwrads
+2. Edit the encrypted playbook
+   ansible-vault edit vault.yml
+3. To chnage the password
+   ansible-vault rekey vault.yml
+4. To encrypt an existing playbook
+   ansible-vault encrypt target.yml 
+   //afterwards it wont ooen with vi target.yml
+5. To decrypt an encrypted playbook
+   ansible-vault decrypt target.yml
+
+### Roles ###
+1. This is like a hierarchy structure, the mail playbook file will talk to only master.yml
+2. we will define multiple roles in their respective directory as following
+   MyRoles (directory)
+      var (main.yml)
+      handlers(main.yml)
+      tasks(main.yml)
+   master.yml -> it will only talk to MyRoles and ultimatley will pull individual roles as mentioned above 
+3. Adding more & more functionality in a single playbook is difficult to maintain in a single file. thats why we create roles 
+4. Ansible Roles 
+     default
+     files
+     handlers
+     meta
+     tasks
+     templates
+     vars
+5.  Default: It stores the data about application variables. example if you want to run to port 8080 , then variables need to define in this path.       
+6. Files: to be transferred into other remote machine
+7. Handlers: dependency mentioned
+8. meta: data about data like author , supported platform .
+9. tasks: it contains all the tasks to be run in playbook
+
+labs:
+i. mkdir -p playbook/roles/webserver/tasks
+ii. tree //o/p   playbook
+                      roles
+                         webserver
+                              tasks
+iii. cd playbook/
+iv.  tree 
+v. touch roles/webserver/tasks/main.yml     //creating main.yml under tasks role
+vi. touch master.yml
+vii. vi roles/webserver/tasks/main.yml 
+     - name: INSTALL APACHE
+       yum: pkg=httpd state=latest
+viii. vi master.yml
+      - host: all
+        user: ansible
+        become: yes
+        connection: ssh
+        roles:
+          - webserver
+
+ansible-playbook master.yml
